@@ -12,6 +12,10 @@ dependencies:
   cupertino_icons: ^1.0.4
   fluent_ui: ^3.12.0
   google_fonts: ^2.3.2
+  units_converter: ^1.2.0
+  provider: ^6.0.2
+  hive: ^2.1.0
+  hive_flutter: ^1.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
