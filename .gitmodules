@@ -1,0 +1,3 @@
+[submodule "local"]
+	path = local
+	url = https://github.com/rk0cc/anitemp_local.git
