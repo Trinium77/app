@@ -1,9 +1,10 @@
 name: anitemp
 description: Record all warm-blood animal's body temperature
 publish_to: 'none'
-version: 1.0.0+1
+version: 0.0.0-alpha+1
 environment:
   sdk: ">=2.17.0 <3.0.0"
+  flutter: ^3.0.0
 dependencies:
   flutter:
     sdk: flutter
@@ -11,6 +12,8 @@ dependencies:
     sdk: flutter 
   cupertino_icons: ^1.0.4
   fluent_ui: ^3.12.0
+  fluentui_icons: ^1.0.0
+  fluentui_system_icons: ^1.1.168
   google_fonts: ^2.3.2
   units_converter: ^1.2.0
   provider: ^6.0.2
