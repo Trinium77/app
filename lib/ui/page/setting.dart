@@ -54,6 +54,7 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
                 // TODO: Pending localize
                 "Theme mode"),
             trailing: Combobox<ThemeMode>(
+                isExpanded: true,
                 items: ThemeMode.values
                     .map((t) => ComboboxItem<ThemeMode>(
                         value: t, child: Text(t.displayName(context))))
@@ -70,22 +71,12 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
                 // TODO: Pending localize
                 "Language"),
             trailing: Combobox<Locale>(
+                isExpanded: true,
                 items: AnitempLocales.supportedLocales
                     .map((l) => ComboboxItem<Locale>(
                         value: l,
-                        child: Text(LocaleNames.of(context)!.nameOf(() {
-                          List<String> localeStr = [l.languageCode];
-
-                          if (l.scriptCode != null) {
-                            localeStr.add(l.scriptCode!);
-                          }
-
-                          if (l.countryCode != null) {
-                            localeStr.add(l.countryCode!);
-                          }
-
-                          return localeStr.join("_");
-                        }())!)))
+                        child: Text(LocaleNames.of(context)!
+                            .nameOf(l.toLanguageTag().replaceAll("-", "_"))!)))
                     .toList(),
                 value: _globalSetting.get("locale"),
                 onChanged: (newLocale) async {
