@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "anitemp" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "anitemp" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 xyz.rk0cc. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 rk0cc. All rights reserved." "\0"
             VALUE "OriginalFilename", "anitemp.exe" "\0"
             VALUE "ProductName", "anitemp" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

@@ -11,4 +11,4 @@ PRODUCT_NAME = anitemp
 PRODUCT_BUNDLE_IDENTIFIER = xyz.rk0cc.anitemp
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2022 xyz.rk0cc. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2022 rk0cc. All rights reserved.

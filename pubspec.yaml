@@ -25,6 +25,11 @@ dependencies:
   path: ^1.8.1
   path_provider: ^2.0.10
   meta: ^1.7.0
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/window_size
+      ref: a738913c8ce2c9f47515382d40827e794a334274
 flutter:
   uses-material-design: true
   generate: true
