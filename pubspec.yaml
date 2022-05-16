@@ -25,9 +25,6 @@ dependencies:
   path: ^1.8.1
   path_provider: ^2.0.10
   meta: ^1.7.0
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
 flutter:
   uses-material-design: true
   generate: true

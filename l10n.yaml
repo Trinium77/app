@@ -3,4 +3,3 @@ template-arb-file: arb_en.arb
 output-localization-file: locals.dart
 output-class: AnitempLocals
 nullable-getter: false
-synthetic-package: false
