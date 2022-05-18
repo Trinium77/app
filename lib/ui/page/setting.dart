@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/locals.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -53,11 +53,13 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
             title: Text(AnitempLocales.of(context).setting_theme_mode),
             trailing: SizedBox(
                 width: 200,
-                child: Combobox<ThemeMode>(
+                child: DropdownButton<ThemeMode>(
                     isExpanded: true,
                     items: ThemeMode.values
-                        .map((t) => ComboboxItem<ThemeMode>(
-                            value: t, child: Text(t.displayName(context))))
+                        .map((t) => DropdownMenuItem<ThemeMode>(
+                            value: t,
+                            child: Text(t.displayName(context),
+                                overflow: TextOverflow.fade, softWrap: false)))
                         .toList(),
                     value: _globalSetting.get("theme_mode"),
                     onChanged: (newThemeMode) async {
@@ -70,13 +72,16 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
             title: Text(AnitempLocales.of(context).setting_language),
             trailing: SizedBox(
                 width: 250,
-                child: Combobox<Locale>(
+                child: DropdownButton<Locale>(
                     isExpanded: true,
                     items: AnitempLocales.supportedLocales
-                        .map((l) => ComboboxItem<Locale>(
+                        .map((l) => DropdownMenuItem<Locale>(
                             value: l,
-                            child: Text(LocaleNames.of(context)!.nameOf(
-                                l.toLanguageTag().replaceAll("-", "_"))!)))
+                            child: Text(
+                                LocaleNames.of(context)!.nameOf(
+                                    l.toLanguageTag().replaceAll("-", "_"))!,
+                                overflow: TextOverflow.fade,
+                                softWrap: false)))
                         .toList(),
                     value: _globalSetting.get("locale"),
                     onChanged: (newLocale) async {
@@ -89,12 +94,9 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
 
   @override
   Widget build(BuildContext context) => SafeArea(
-      child: ScaffoldPage.scrollable(
-          header: PageHeader(title: Text(
-              // TODO: Pending localize
-              "Setting")),
-          children: buildSettingOptions(context),
-          scrollController: _controller));
+      child: Scaffold(
+          appBar: AppBar(title: Text(AnitempLocales.of(context).setting)),
+          body: ListView(children: buildSettingOptions(context))));
 }
 
 class _AnitempSettingPageState

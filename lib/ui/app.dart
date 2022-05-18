@@ -1,4 +1,5 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:anitemp/ui/page/setting.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/locals.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
@@ -13,10 +14,10 @@ class AnitempApp extends StatelessWidget {
   Widget build(BuildContext context) => ValueListenableBuilder(
       valueListenable:
           Hive.box("global_setting").listenable(keys: ["theme_mode", "locale"]),
-      builder: (context, Box box, _) => FluentApp(
+      builder: (context, Box box, _) => MaterialApp(
           themeMode: box.get("theme_mode"),
           locale: box.get("locale"),
-          localizationsDelegates: [
+          localizationsDelegates: <LocalizationsDelegate>[
             LocaleNamesLocalizationsDelegate(),
             AnitempLocales.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -24,18 +25,7 @@ class AnitempApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate
           ],
           supportedLocales: AnitempLocales.supportedLocales,
-          localeListResolutionCallback: (providedLocale, supportedLocale) {
-            if (providedLocale != null) {
-              for (Locale l in providedLocale) {
-                if (supportedLocale.contains(l)) {
-                  return l;
-                }
-              }
-            }
-
-            return Locale('en');
-          },
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
-          home: const AnitempHomepage()));
+          home: const AnitempSettingPage()));
 }

@@ -1,8 +1,8 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 
 class AnitempHomepage extends StatelessWidget {
   const AnitempHomepage({super.key});
 
   @override
-  Widget build(BuildContext context) => ScaffoldPage();
+  Widget build(BuildContext context) => Scaffold();
 }
