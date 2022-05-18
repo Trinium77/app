@@ -54,13 +54,19 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      bottomNavigationBar: BottomAppBar(
-          child: Stack(
-              alignment: Alignment.centerRight,
-              children: _bottomBarChildren(context)),
-          shape: const CircularNotchedRectangle()),
-      floatingActionButton:
-          FloatingActionButton(onPressed: () {}, child: const Icon(Icons.add)),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked);
+  Widget build(BuildContext context) => WillPopScope(
+      onWillPop: () async {
+        print("Pop");
+        return true;
+      },
+      child: Scaffold(
+          bottomNavigationBar: BottomAppBar(
+              child: Stack(
+                  alignment: Alignment.centerRight,
+                  children: _bottomBarChildren(context)),
+              shape: const CircularNotchedRectangle()),
+          floatingActionButton: FloatingActionButton(
+              onPressed: () {}, child: const Icon(Icons.add)),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked));
 }
