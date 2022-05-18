@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_size/window_size.dart' as window_size;
 
 import 'database/path.dart';
 import 'database/hive/type_adapters.dart';
@@ -40,9 +40,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
-    await windowManager.ensureInitialized();
-    windowManager.waitUntilReadyToShow(WindowOptions(
-        maximumSize: Size.infinite, minimumSize: const Size(800, 450)));
+    window_size.setWindowMinSize(const Size(800, 450));
+    window_size.setWindowMaxSize(Size.infinite);
   }
 
   runApp(const AnitempApp());
