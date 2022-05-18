@@ -57,9 +57,7 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
                     isExpanded: true,
                     items: ThemeMode.values
                         .map((t) => DropdownMenuItem<ThemeMode>(
-                            value: t,
-                            child: Text(t.displayName(context),
-                                overflow: TextOverflow.fade, softWrap: false)))
+                            value: t, child: Text(t.displayName(context))))
                         .toList(),
                     value: _globalSetting.get("theme_mode"),
                     onChanged: (newThemeMode) async {
@@ -71,7 +69,7 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
         ListTile(
             title: Text(AnitempLocales.of(context).setting_language),
             trailing: SizedBox(
-                width: 250,
+                width: 300,
                 child: DropdownButton<Locale>(
                     isExpanded: true,
                     items: AnitempLocales.supportedLocales
@@ -80,8 +78,7 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
                             child: Text(
                                 LocaleNames.of(context)!.nameOf(
                                     l.toLanguageTag().replaceAll("-", "_"))!,
-                                overflow: TextOverflow.fade,
-                                softWrap: false)))
+                                style: const TextStyle(fontSize: 12.5))))
                         .toList(),
                     value: _globalSetting.get("locale"),
                     onChanged: (newLocale) async {

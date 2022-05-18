@@ -1,4 +1,3 @@
-import 'package:anitemp/ui/page/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/locals.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'page/home.dart';
+import 'theme/theme.dart' show AnitempThemeData;
 
 class AnitempApp extends StatelessWidget {
   const AnitempApp({super.key});
@@ -25,7 +25,7 @@ class AnitempApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate
           ],
           supportedLocales: AnitempLocales.supportedLocales,
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-          home: const AnitempSettingPage()));
+          theme: AnitempThemeData.light(),
+          darkTheme: AnitempThemeData.dark(),
+          home: const AnitempHomepage()));
 }
