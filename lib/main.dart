@@ -33,9 +33,9 @@ void main() async {
   if (!gbs.containsKey("theme_mode")) {
     await gbs.put("theme_mode", ThemeMode.system);
   }
-  if (!gbs.containsKey("locale")) {
-    await gbs.put("locale", Locale('en'));
-  }
+  //if (!gbs.containsKey("locale")) {
+  await gbs.put("locale", Locale('en'));
+  //}
 
   WidgetsFlutterBinding.ensureInitialized();
 
