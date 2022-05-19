@@ -3,6 +3,8 @@ import 'package:flutter_gen/gen_l10n/locals.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../reusable/labeled_divider.dart';
+
 extension on ThemeMode {
   String displayName(BuildContext context) {
     switch (this) {
@@ -16,21 +18,17 @@ extension on ThemeMode {
   }
 }
 
-abstract class _AnitempSettingPageBase extends StatefulWidget {
-  const _AnitempSettingPageBase({super.key});
+abstract class AnitempSettingPage implements StatefulWidget {
+  const factory AnitempSettingPage({Key? key}) = _AnitempSettingPage;
+
+  factory AnitempSettingPage.withUser(dynamic user, {Key? key}) =
+      _AnitempUserSettingPage;
 
   @override
-  State<_AnitempSettingPageBase> createState();
+  State<AnitempSettingPage> createState();
 }
 
-class AnitempSettingPage extends _AnitempSettingPageBase {
-  const AnitempSettingPage({super.key});
-
-  @override
-  State<AnitempSettingPage> createState() => _AnitempSettingPageState();
-}
-
-abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
+abstract class _AnitempSettingPageBaseState<T extends AnitempSettingPage>
     extends State<T> {
   final Box _globalSetting = Hive.box("global_setting");
   late final ScrollController _controller;
@@ -96,5 +94,35 @@ abstract class _AnitempSettingPageBaseState<T extends _AnitempSettingPageBase>
           body: ListView(children: buildSettingOptions(context))));
 }
 
+class _AnitempSettingPage extends StatefulWidget implements AnitempSettingPage {
+  const _AnitempSettingPage({super.key});
+
+  @override
+  State<_AnitempSettingPage> createState() => _AnitempSettingPageState();
+}
+
 class _AnitempSettingPageState
-    extends _AnitempSettingPageBaseState<AnitempSettingPage> {}
+    extends _AnitempSettingPageBaseState<_AnitempSettingPage> {}
+
+class _AnitempUserSettingPage extends StatefulWidget
+    implements AnitempSettingPage {
+  final user;
+
+  _AnitempUserSettingPage(this.user, {super.key});
+
+  @override
+  State<_AnitempUserSettingPage> createState() =>
+      _AnitempUserSettingPageState();
+}
+
+class _AnitempUserSettingPageState
+    extends _AnitempSettingPageBaseState<_AnitempUserSettingPage> {
+  @override
+  List<Widget> buildSettingOptions(BuildContext context) {
+    List<Widget> userSection = <Widget>[
+      LabeledDivider(label: "User Setting"),
+      LabeledDivider(label: "App Setting")
+    ];
+    return userSection..addAll(super.buildSettingOptions(context));
+  }
+}
