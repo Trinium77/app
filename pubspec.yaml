@@ -30,6 +30,7 @@ dependencies:
       ref: a738913c8ce2c9f47515382d40827e794a334274
   flutter_localized_locales: ^2.0.3
   package_info_plus: ^1.4.2
+  flutter_window_close: ^0.2.2
 flutter:
   uses-material-design: true
   generate: true
