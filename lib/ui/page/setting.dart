@@ -115,8 +115,18 @@ class _AnitempUserSettingPage extends StatefulWidget
       _AnitempUserSettingPageState();
 }
 
+enum _AnitempUserSettingLeaveAction { save, without_save, cancel }
+
 class _AnitempUserSettingPageState
     extends _AnitempSettingPageBaseState<_AnitempUserSettingPage> {
+  late bool modified;
+
+  @override
+  void initState() {
+    super.initState();
+    modified = false;
+  }
+
   @override
   List<Widget> buildSettingOptions(BuildContext context) {
     List<Widget> userSection = <Widget>[
@@ -125,4 +135,51 @@ class _AnitempUserSettingPageState
     ];
     return userSection..addAll(super.buildSettingOptions(context));
   }
+
+  @override
+  Widget build(BuildContext context) => WillPopScope(
+      onWillPop: () async {
+        if (!modified) {
+          return true;
+        }
+
+        _AnitempUserSettingLeaveAction leaveAction = await showDialog<
+                    _AnitempUserSettingLeaveAction>(
+                context: context,
+                builder: (context) => AlertDialog(
+                        title: Text("Leave setting"),
+                        content:
+                            Text("Do you want to save modified user data?"),
+                        actions: <TextButton>[
+                          TextButton(
+                              onPressed: () =>
+                                  Navigator.pop<_AnitempUserSettingLeaveAction>(
+                                      context,
+                                      _AnitempUserSettingLeaveAction.save),
+                              child: Text("Save")),
+                          TextButton(
+                              onPressed: () =>
+                                  Navigator.pop<_AnitempUserSettingLeaveAction>(
+                                      context,
+                                      _AnitempUserSettingLeaveAction
+                                          .without_save),
+                              child: Text("Don't save")),
+                          TextButton(
+                              onPressed: () =>
+                                  Navigator.pop<_AnitempUserSettingLeaveAction>(
+                                      context,
+                                      _AnitempUserSettingLeaveAction.cancel),
+                              child: Text("Cancel"))
+                        ])) ??
+            _AnitempUserSettingLeaveAction.cancel;
+
+        switch (leaveAction) {
+          case _AnitempUserSettingLeaveAction.save:
+          case _AnitempUserSettingLeaveAction.without_save:
+            return true;
+          case _AnitempUserSettingLeaveAction.cancel:
+            return false;
+        }
+      },
+      child: super.build(context));
 }
