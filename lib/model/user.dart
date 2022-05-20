@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,8 +16,16 @@ abstract class _UserBase implements Archivable {
 
   @override
   Uint8List toBytes() {
-    // TODO: implement toBytes
-    throw UnimplementedError();
+    Map<String, String?> jsonData = <String, String?>{
+      "name": name,
+      "animal": animal.name,
+      "image": image == null ? null : base64Encode(image!)
+    };
+
+    List<int> b = utf8.encode(jsonEncode(jsonData));
+
+    return UnmodifiableUint8ListView(
+        b is Uint8List ? b : Uint8List.fromList(b));
   }
 }
 

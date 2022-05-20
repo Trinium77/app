@@ -32,6 +32,7 @@ dependencies:
   flutter_window_close: ^0.2.2
   quiver: ^3.1.0
   mime: ^1.0.2
+  lzma: ^1.0.1
 flutter:
   uses-material-design: true
   generate: true
