@@ -10,14 +10,14 @@ final Uint8List _magicBytes =
 
 @immutable
 @sealed
-class AnitempCodedData {
+class AnitempCodecData {
   final User user;
 
-  AnitempCodedData(this.user);
+  AnitempCodecData(this.user);
 }
 
 @sealed
-class AnitempCodec extends Codec<AnitempCodedData, Uint8List> {
+class AnitempCodec extends Codec<AnitempCodecData, Uint8List> {
   const AnitempCodec();
 
   @override
@@ -28,22 +28,22 @@ class AnitempCodec extends Codec<AnitempCodedData, Uint8List> {
 }
 
 @sealed
-class AnitempDecoder extends Converter<Uint8List, AnitempCodedData> {
+class AnitempDecoder extends Converter<Uint8List, AnitempCodecData> {
   const AnitempDecoder._();
 
   @override
-  AnitempCodedData convert(Uint8List input) {
+  AnitempCodecData convert(Uint8List input) {
     // TODO: implement convert
     throw UnimplementedError();
   }
 }
 
 @sealed
-class AnitempEncoder extends Converter<AnitempCodedData, Uint8List> {
+class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
   const AnitempEncoder._();
 
   @override
-  Uint8List convert(AnitempCodedData input) {
+  Uint8List convert(AnitempCodecData input) {
     BytesBuilder builder = BytesBuilder()
       ..add(_magicBytes)
       ..add(input.user.toBytes());
