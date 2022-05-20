@@ -1,3 +1,6 @@
 [submodule "local"]
 	path = local
 	url = https://github.com/rk0cc/anitemp_local.git
+[submodule "wiki"]
+	path = wiki
+	url = https://github.com/rk0cc/anitemp.wiki.git
