@@ -40,6 +40,13 @@ abstract class _UserBase implements Archivable {
 
     return bb.toBytes();
   }
+
+  @override
+  String toString() => <String, String>{
+        "name": name,
+        "animal": animal.name,
+        "image_size": image?.lengthInBytes.toString() ?? "None"
+      }.toString();
 }
 
 @immutable
@@ -56,25 +63,26 @@ abstract class User extends _UserBase {
 
   factory User.fromByte(Uint8List bytes) {
     List<Uint8List> section = [];
+    List<int> content = [];
+    List<int> nulbuf = [];
 
     for (int b in bytes) {
-      List<int> content = [];
-      List<int> nulbuf = [];
-
       if (b == 0x00) {
         nulbuf.add(b);
-      } else {
+      }
+
+      if (nulbuf.length == _UserBase._dataSection.length) {
+        if (content.isNotEmpty) {
+          section.add(Uint8List.fromList(content));
+        }
+        content.clear();
+        nulbuf.clear();
+      } else if (b != 0x00) {
         if (nulbuf.isNotEmpty) {
           content.addAll(nulbuf);
           nulbuf.clear();
         }
         content.add(b);
-      }
-
-      if (nulbuf.length == _UserBase._dataSection.length) {
-        section.add(Uint8List.fromList(content));
-        content.clear();
-        nulbuf.clear();
       }
     }
 
