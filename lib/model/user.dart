@@ -10,32 +10,81 @@ import '../archive/archivable.dart';
 final RegExp _imageRegex = RegExp(r"^image/.+$", dotAll: true);
 
 abstract class _UserBase implements Archivable {
-  String get name;
-  Animal get animal;
-  Uint8List? get image;
+  static final Uint8List _dataSection =
+      Uint8List.fromList(<int>[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
+
+  final String name;
+  final Animal animal;
+  final Uint8List? image;
+
+  _UserBase(this.name, this.animal, Uint8List? image)
+      : assert(image == null
+            ? true
+            : _imageRegex.hasMatch(lookupMimeType('', headerBytes: image)!)),
+        this.image = image == null ? null : UnmodifiableUint8ListView(image);
 
   @override
   Uint8List toBytes() {
-    Map<String, String?> jsonData = <String, String?>{
-      "name": name,
-      "animal": animal.name,
-      "image": image == null ? null : base64Encode(image!)
-    };
+    BytesBuilder bb = BytesBuilder()
+      ..add(_dataSection)
+      ..add(utf8.encode(name))
+      ..add(_dataSection)
+      ..add(utf8.encode(animal.name))
+      ..add(_dataSection);
 
-    List<int> b = utf8.encode(jsonEncode(jsonData));
+    if (image != null) {
+      bb
+        ..add(image!)
+        ..add(_dataSection);
+    }
 
-    return UnmodifiableUint8ListView(
-        b is Uint8List ? b : Uint8List.fromList(b));
+    return bb.toBytes();
   }
 }
 
 @immutable
 @sealed
 abstract class User extends _UserBase {
+  String get name;
+  Animal get animal;
+  Uint8List? get image;
+
   factory User(
       {required String name,
       required Animal animal,
       required Uint8List? image}) = _User;
+
+  factory User.fromByte(Uint8List bytes) {
+    List<Uint8List> section = [];
+
+    for (int b in bytes) {
+      List<int> content = [];
+      List<int> nulbuf = [];
+
+      if (b == 0x00) {
+        nulbuf.add(b);
+      } else {
+        if (nulbuf.isNotEmpty) {
+          content.addAll(nulbuf);
+          nulbuf.clear();
+        }
+        content.add(b);
+      }
+
+      if (nulbuf.length == _UserBase._dataSection.length) {
+        section.add(Uint8List.fromList(content));
+        content.clear();
+        nulbuf.clear();
+      }
+    }
+
+    String name = utf8.decode(section[0]);
+    Animal animal =
+        Animal.values.singleWhere((a) => a.name == utf8.decode(section[1]));
+    Uint8List? image = section.length >= 3 ? section[2] : null;
+
+    return _User(name: name, animal: animal, image: image);
+  }
 
   User updateName(String name);
   User updateAnimal(Animal animal);
@@ -43,20 +92,9 @@ abstract class User extends _UserBase {
 }
 
 class _User extends _UserBase implements User {
-  @override
-  final String name;
-
-  @override
-  final Animal animal;
-
-  @override
-  final Uint8List? image;
-
-  _User({required this.name, required this.animal, required Uint8List? image})
-      : assert(image == null
-            ? true
-            : _imageRegex.hasMatch(lookupMimeType('', headerBytes: image)!)),
-        this.image = image == null ? null : UnmodifiableUint8ListView(image);
+  _User(
+      {required String name, required Animal animal, required Uint8List? image})
+      : super(name, animal, image);
 
   @override
   User updateAnimal(Animal animal) =>
@@ -74,21 +112,9 @@ class _User extends _UserBase implements User {
 class UserWithId extends _UserBase implements User {
   final int id;
 
-  @override
-  final String name;
-
-  @override
-  final Animal animal;
-
-  @override
-  final Uint8List? image;
-
   UserWithId(this.id,
-      {required this.name, required this.animal, required Uint8List? image})
-      : assert(image == null
-            ? true
-            : _imageRegex.hasMatch(lookupMimeType('', headerBytes: image)!)),
-        this.image = image == null ? null : UnmodifiableUint8ListView(image);
+      {required String name, required Animal animal, required Uint8List? image})
+      : super(name, animal, image);
 
   @override
   UserWithId updateAnimal(Animal animal) =>
