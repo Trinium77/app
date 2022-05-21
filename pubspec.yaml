@@ -34,6 +34,8 @@ dependencies:
   mime: ^1.0.2
   lzma: ^1.0.1
   collection: ^1.16.0
+  csv: ^5.0.1
+  pointycastle: ^3.6.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

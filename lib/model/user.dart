@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -6,10 +7,13 @@ import 'package:mime/mime.dart';
 
 import 'animal.dart';
 import '../archive/archivable.dart';
+import '../database/sql/object.dart';
 
 final RegExp _imageRegex = RegExp(r"^image/.+$", dotAll: true);
 
-abstract class _UserBase implements Archivable {
+final GZipCodec _lightGzip = GZipCodec(level: 3, memLevel: 5);
+
+class _UserBase implements Archivable {
   static final Uint8List _dataSection =
       Uint8List.fromList(<int>[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
@@ -20,25 +24,21 @@ abstract class _UserBase implements Archivable {
   _UserBase(this.name, this.animal, Uint8List? image)
       : assert(image == null
             ? true
-            : _imageRegex.hasMatch(lookupMimeType('', headerBytes: image)!)),
+            : image.lengthInBytes <= 10 * 1000 * 1000 &&
+                _imageRegex.hasMatch(lookupMimeType('', headerBytes: image)!)),
         this.image = image == null ? null : UnmodifiableUint8ListView(image);
 
   @override
   Uint8List toBytes() {
-    BytesBuilder bb = BytesBuilder()
-      ..add(_dataSection)
-      ..add(utf8.encode(name))
-      ..add(_dataSection)
-      ..add(utf8.encode(animal.name))
-      ..add(_dataSection);
+    Map<String, dynamic> jsonData = {
+      "name": name,
+      "animal": animal.name,
+      "image": image
+    };
 
-    if (image != null) {
-      bb
-        ..add(image!)
-        ..add(_dataSection);
-    }
+    List<int> b = _lightGzip.encode(utf8.encode(jsonEncode(jsonData)));
 
-    return bb.toBytes();
+    return b is Uint8List ? b : Uint8List.fromList(b);
   }
 
   @override
@@ -51,7 +51,7 @@ abstract class _UserBase implements Archivable {
 
 @immutable
 @sealed
-abstract class User extends _UserBase {
+abstract class User implements _UserBase {
   String get name;
   Animal get animal;
   Uint8List? get image;
@@ -62,36 +62,14 @@ abstract class User extends _UserBase {
       required Uint8List? image}) = _User;
 
   factory User.fromByte(Uint8List bytes) {
-    List<Uint8List> section = [];
-    List<int> content = [];
-    List<int> nulbuf = [];
+    Map<String, Object?> decoded =
+        jsonDecode(utf8.decode(_lightGzip.decode(bytes)));
 
-    for (int b in bytes) {
-      if (b == 0x00) {
-        nulbuf.add(b);
-      }
-
-      if (nulbuf.length == _UserBase._dataSection.length) {
-        if (content.isNotEmpty) {
-          section.add(Uint8List.fromList(content));
-        }
-        content.clear();
-        nulbuf.clear();
-      } else if (b != 0x00) {
-        if (nulbuf.isNotEmpty) {
-          content.addAll(nulbuf);
-          nulbuf.clear();
-        }
-        content.add(b);
-      }
-    }
-
-    String name = utf8.decode(section[0]);
-    Animal animal =
-        Animal.values.singleWhere((a) => a.name == utf8.decode(section[1]));
-    Uint8List? image = section.length >= 3 ? section[2] : null;
-
-    return _User(name: name, animal: animal, image: image);
+    return _User(
+        name: decoded["name"]! as String,
+        animal: Animal.values.singleWhere(
+            (element) => element.name == decoded["animal"]! as String),
+        image: decoded["image"] as Uint8List?);
   }
 
   User updateName(String name);
@@ -117,7 +95,8 @@ class _User extends _UserBase implements User {
       _User(name: this.name, animal: this.animal, image: image);
 }
 
-class UserWithId extends _UserBase implements User {
+class UserWithId extends _UserBase implements User, SQLIdReference {
+  @override
   final int id;
 
   UserWithId(this.id,
