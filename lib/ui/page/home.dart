@@ -1,8 +1,8 @@
-import 'package:anitemp/ui/reusable/close_confirm.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../reusable/close_confirm.dart';
 import 'setting.dart' show AnitempSettingPage;
 
 class AnitempHomepage extends StatefulWidget {
@@ -56,14 +56,14 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
 
   @override
   Widget build(BuildContext context) => CloseConfirmScaffold(
-      scaffold: Scaffold(
-          bottomNavigationBar: BottomAppBar(
-              child: Stack(
-                  alignment: Alignment.centerRight,
-                  children: _bottomBarChildren(context)),
-              shape: const CircularNotchedRectangle()),
-          floatingActionButton: FloatingActionButton(
-              onPressed: () {}, child: const Icon(Icons.add)),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked));
+          scaffold: Scaffold(
+        bottomNavigationBar: BottomAppBar(
+            child: Stack(
+                alignment: Alignment.centerRight,
+                children: _bottomBarChildren(context)),
+            shape: const CircularNotchedRectangle()),
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {}, child: const Icon(Icons.add)),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      ));
 }

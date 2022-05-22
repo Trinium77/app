@@ -481,6 +481,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  wheel_chooser:
+    dependency: "direct main"
+    description:
+      name: wheel_chooser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   win32:
     dependency: transitive
     description:
