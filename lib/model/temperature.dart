@@ -65,6 +65,18 @@ abstract class Temperature implements Comparable<Temperature> {
     }
   }
 
+  static CommonTemperature ensureUnit(
+      CommonTemperature temperature, Type type) {
+    switch (type) {
+      case Celsius:
+        return temperature.convertKelvin().toCelsius();
+      case Fahrenheit:
+        return temperature.convertKelvin().toFahrenheit();
+      default:
+        throw TypeError();
+    }
+  }
+
   /// [Temperature]'s unit symbol.
   String get unit;
 
