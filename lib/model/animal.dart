@@ -55,7 +55,14 @@ class _AnimalMetadata {
 }
 
 /// Warm-blood [Animal] type supported in Anitemp.
-enum Animal { human }
+enum Animal {
+  human(Celsius(37));
+
+  /// Default [Temperature] display when opened record page.
+  final Temperature defaultTemperature;
+
+  const Animal(this.defaultTemperature);
+}
 
 /// An extension for getting data with [Animal].
 extension AnimalExtension on Animal {
