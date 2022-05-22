@@ -59,7 +59,7 @@ enum Animal {
   human(Celsius(37));
 
   /// Default [Temperature] display when opened record page.
-  final Temperature defaultTemperature;
+  final CommonTemperature defaultTemperature;
 
   const Animal(this.defaultTemperature);
 }
