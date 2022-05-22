@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -9,11 +8,14 @@ import 'animal.dart';
 import '../archive/archivable.dart';
 import '../database/sql/object.dart';
 
+/// [RegExp] uses for checking image MIME type
 final RegExp _imageRegex = RegExp(r"^image/.+$", dotAll: true);
 
+/// Configuration of [GZipCodec] for fast-compressing [User] data.
 final GZipCodec _lightGzip = GZipCodec(level: 3, memLevel: 5);
 
-class _UserBase implements Archivable {
+/// Based class of [User] with [Archivable] implementation.
+class _UserBase extends Archivable with JsonBasedArchivable {
   static final Uint8List _dataSection =
       Uint8List.fromList(<int>[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
@@ -30,13 +32,7 @@ class _UserBase implements Archivable {
 
   @override
   Uint8List toBytes() {
-    Map<String, dynamic> jsonData = {
-      "name": name,
-      "animal": animal.name,
-      "image": image
-    };
-
-    List<int> b = _lightGzip.encode(utf8.encode(jsonEncode(jsonData)));
+    List<int> b = _lightGzip.encode(super.toBytes());
 
     return b is Uint8List ? b : Uint8List.fromList(b);
   }
@@ -47,33 +43,50 @@ class _UserBase implements Archivable {
         "animal": animal.name,
         "image_size": image?.lengthInBytes.toString() ?? "None"
       }.toString();
+
+  @override
+  Map<String, dynamic> get jsonData =>
+      <String, dynamic>{"name": name, "animal": animal.name, "image": image};
 }
 
+/// An entity to identify the relationship of data.
 @immutable
 @sealed
 abstract class User implements _UserBase {
+  /// Name of the [User].
   String get name;
+
+  /// [Animal] type of this [User].
   Animal get animal;
+
+  /// Image of the [User] in [Uint8List], if provided.
   Uint8List? get image;
 
+  /// Construct a new [User] information.
   factory User(
       {required String name,
       required Animal animal,
       required Uint8List? image}) = _User;
 
+  /// Decode [User] information from [bytes].
   factory User.fromByte(Uint8List bytes) {
-    Map<String, Object?> decoded =
-        jsonDecode(utf8.decode(_lightGzip.decode(bytes)));
+    Map<String, dynamic> decoded =
+        JsonBasedArchivable.jbaDecoder(_lightGzip.decode(bytes));
 
     return _User(
-        name: decoded["name"]! as String,
+        name: decoded["name"] as String,
         animal: Animal.values.singleWhere(
-            (element) => element.name == decoded["animal"]! as String),
+            (element) => element.name == decoded["animal"] as String),
         image: decoded["image"] as Uint8List?);
   }
 
+  /// Create a new [User] with applied [name].
   User updateName(String name);
+
+  /// Create a new [User] with applied [animal] type.
   User updateAnimal(Animal animal);
+
+  /// Create a new [User] with applied [image].
   User updateUint8List(Uint8List? image);
 }
 
@@ -95,10 +108,13 @@ class _User extends _UserBase implements User {
       _User(name: this.name, animal: this.animal, image: image);
 }
 
+/// Subtype of [User] which fetch from database.
 class UserWithId extends _UserBase implements User, SQLIdReference {
+  /// [id] of SQL's tuple.
   @override
   final int id;
 
+  /// Construct new [User] from SQL.
   UserWithId(this.id,
       {required String name, required Animal animal, required Uint8List? image})
       : super(name, animal, image);
