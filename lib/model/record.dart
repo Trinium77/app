@@ -1,8 +1,15 @@
-import 'package:collection/collection.dart';
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:csv/csv.dart';
 import 'package:meta/meta.dart';
 
+import '../archive/archivable.dart';
 import '../database/sql/object.dart';
 import '../model/temperature.dart';
+
+final CsvCodec _csvCodec = CsvCodec(eol: "\n", shouldParseNumbers: false);
 
 class _TemperatureRecordNodeBase {
   final CommonTemperature temperature;
@@ -102,6 +109,9 @@ extension TemperatureRecordNodeIterableExtension<
     return UnmodifiableListView(csv);
   }
 
+  ArchivableTemperatureRecordNodeIterable toArchivable() =>
+      ArchivableTemperatureRecordNodeIterable(this);
+
   static List<TemperatureRecordNode> parseFromCsv(List<List<String>> csv) {
     List<TemperatureRecordNode> parsed = <TemperatureRecordNode>[];
 
@@ -133,4 +143,31 @@ extension TemperatureRecordNodeListExtension<N extends TemperatureRecordNode>
 
   void sortByRecordedAt({bool oldToNew = false}) => sort(
       (a, b) => _sortInternal<DateTime>(oldToNew, a.recordedAt, b.recordedAt));
+}
+
+class ArchivableTemperatureRecordNodeIterable extends Archivable
+    with IterableMixin<TemperatureRecordNode> {
+  final Iterable<TemperatureRecordNode> _source;
+
+  ArchivableTemperatureRecordNodeIterable(
+      Iterable<TemperatureRecordNode> source)
+      : this._source = List.from(source);
+
+  factory ArchivableTemperatureRecordNodeIterable.fromBytes(Uint8List bytes) {
+    List<List<String>> csv =
+        _csvCodec.decoder.convert<String>(utf8.decode(bytes));
+
+    return ArchivableTemperatureRecordNodeIterable(
+        TemperatureRecordNodeIterableExtension.parseFromCsv(csv));
+  }
+
+  @override
+  Iterator<TemperatureRecordNode> get iterator => _source.iterator;
+
+  @override
+  Uint8List toBytes() {
+    List<int> encoded = utf8.encode(_csvCodec.encoder.convert(toCsv()));
+
+    return encoded is Uint8List ? encoded : Uint8List.fromList(encoded);
+  }
 }
