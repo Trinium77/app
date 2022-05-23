@@ -35,11 +35,10 @@ abstract class _CloseConfirmScaffoldBaseState
                             // TODO: Localize
                             "Yes",
                             style: TextStyle(
-                                color:
-                                    MediaQuery.of(context).platformBrightness ==
-                                            Brightness.dark
-                                        ? Colors.red[700]
-                                        : Colors.redAccent))),
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.red[700]
+                                    : Colors.redAccent))),
                     TextButton(
                         onPressed: () => Navigator.pop<bool>(context, false),
                         child: Text(

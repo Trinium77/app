@@ -240,12 +240,12 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                         child: Text("Save",
                                             style: _actionBtnTxtStyle)),
                                     style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty
-                                            .all(MediaQuery.of(context)
-                                                        .platformBrightness ==
-                                                    Brightness.light
-                                                ? Colors.green[400]
-                                                : Colors.green[700]))),
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? Colors.green[400]
+                                                    : Colors.green[700]))),
                                 ElevatedButton(
                                     onPressed: () {},
                                     child: Padding(
@@ -253,12 +253,12 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                         child: Text("Discard",
                                             style: _actionBtnTxtStyle)),
                                     style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty
-                                            .all(MediaQuery.of(context)
-                                                        .platformBrightness ==
-                                                    Brightness.light
-                                                ? Colors.red[400]
-                                                : Colors.red[700])))
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? Colors.red[400]
+                                                    : Colors.red[700])))
                               ]
                                   .map((btn) => Padding(
                                       padding: const EdgeInsets.all(10),
