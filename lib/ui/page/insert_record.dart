@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../model/temperature.dart' hide Kelvin;
+import '../theme/colour.dart';
 
 class InsertRecordPage extends StatefulWidget {
   final TemperatureUnitPreference unitPreference;
@@ -237,7 +238,7 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                         builder: (context, constraints) => Flex(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
-                              direction: constraints.maxWidth >= 800
+                              direction: constraints.maxWidth >= 720
                                   ? Axis.horizontal
                                   : Axis.vertical,
                               children: <ElevatedButton>[
@@ -251,11 +252,8 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                             style: _actionBtnTxtStyle)),
                                     style: ButtonStyle(
                                         backgroundColor:
-                                            MaterialStateProperty.all(
-                                                Theme.of(context).brightness ==
-                                                        Brightness.light
-                                                    ? Colors.green[400]
-                                                    : Colors.green[700]))),
+                                            AnitempThemeColourHandler(context)
+                                                .mspSuccess)),
                                 ElevatedButton(
                                     onPressed: () {},
                                     child: Padding(
@@ -266,11 +264,8 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                             style: _actionBtnTxtStyle)),
                                     style: ButtonStyle(
                                         backgroundColor:
-                                            MaterialStateProperty.all(
-                                                Theme.of(context).brightness ==
-                                                        Brightness.light
-                                                    ? Colors.red[400]
-                                                    : Colors.red[700])))
+                                            AnitempThemeColourHandler(context)
+                                                .mspError))
                               ]
                                   .map((btn) => Padding(
                                       padding: const EdgeInsets.all(10),
@@ -292,7 +287,13 @@ class _TemperatureValueTextInputFormatter extends TextInputFormatter {
     }
 
     List<String> sp = nVT.split(".");
-    if (sp.length == 2 && sp.last.length > 1) {
+    if (sp[0].length > 3) {
+      String first3 = sp[0].substring(0, 3);
+      return TextEditingValue(
+          text: first3,
+          selection: TextSelection(
+              baseOffset: first3.length, extentOffset: first3.length));
+    } else if (sp.length == 2 && sp.last.length > 1) {
       String txt = "${sp[0]}.${sp[1][0]}";
       return TextEditingValue(
           text: txt,
