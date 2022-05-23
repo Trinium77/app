@@ -1,9 +1,32 @@
+import 'package:anitemp/model/user.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../model/temperature.dart' show TemperatureUnitPreference;
 import '../../../model/user_setting.dart';
 import '../object.dart' show SQLQueryResult;
 import '../open.dart';
+
+extension UserSettingSQLExtension on UserSetting {
+  Future<void> insertSettingToUser(
+      {UserWithId? user, bool keepOpen = false}) async {
+    Database db = await openAnitempSqlite();
+
+    try {
+      int uid = user?.id ??
+          await db
+              .query("anitempuser",
+                  columns: <String>["id"], orderBy: "id DESC", limit: 1)
+              .then((r) => r.single["id"] as int);
+
+      await db.insert(
+          "anitempupref", <String, Object?>{"uid": uid}..addAll(jsonData));
+    } finally {
+      if (!keepOpen) {
+        await db.close();
+      }
+    }
+  }
+}
 
 extension UserSettingWithIdSQLExtension on UserSettingWithId {
   Future<void> updateSetting({bool keepOpen = false}) async {
