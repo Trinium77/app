@@ -22,6 +22,10 @@ class InsertRecordPage extends StatefulWidget {
 
 class _InsertRecordPageState extends State<InsertRecordPage> {
   static const List<String> _unitLbl = const <String>["\u{2103}", "\u{2109}"];
+  static const double _paddingHori = 12;
+  static const TextStyle _actionBtnTxtStyle = TextStyle(fontSize: 18);
+  static const EdgeInsets _actionBtnPadding =
+      EdgeInsets.symmetric(vertical: 6, horizontal: 10);
 
   late DateTime recorededAt;
   late CommonTemperature temperature;
@@ -106,6 +110,9 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                               child: Text("OK"))
                         ],
                       ));
+              setState(() {
+                _submit = false;
+              });
               return false;
             }
 
@@ -121,8 +128,8 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                           ? Colors.black
                           : null)),
               body: ListView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: _paddingHori, vertical: 4),
                   children: <Widget>[
                     Padding(
                         padding: const EdgeInsets.only(top: 4),
@@ -217,6 +224,47 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                   labels: _unitLbl,
                                   onToggle: _onUnitToggle))
                         ]),
+                    const Divider(),
+                    LayoutBuilder(
+                        builder: (context, constraints) => Flex(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              direction: constraints.maxWidth >= 800
+                                  ? Axis.horizontal
+                                  : Axis.vertical,
+                              children: <ElevatedButton>[
+                                ElevatedButton(
+                                    onPressed: () {},
+                                    child: Padding(
+                                        padding: _actionBtnPadding,
+                                        child: Text("Save",
+                                            style: _actionBtnTxtStyle)),
+                                    style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty
+                                            .all(MediaQuery.of(context)
+                                                        .platformBrightness ==
+                                                    Brightness.light
+                                                ? Colors.green[400]
+                                                : Colors.green[700]))),
+                                ElevatedButton(
+                                    onPressed: () {},
+                                    child: Padding(
+                                        padding: _actionBtnPadding,
+                                        child: Text("Discard",
+                                            style: _actionBtnTxtStyle)),
+                                    style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty
+                                            .all(MediaQuery.of(context)
+                                                        .platformBrightness ==
+                                                    Brightness.light
+                                                ? Colors.red[400]
+                                                : Colors.red[700])))
+                              ]
+                                  .map((btn) => Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: btn))
+                                  .toList(),
+                            ))
                   ]))));
 }
 
