@@ -50,6 +50,42 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
 
   bool _get24hEnabled(Box box) => box.get("24h_mode", defaultValue: true);
 
+  void _onTextFieldChanged(String newVal) {
+    if (newVal.isNotEmpty) {
+      setState(() {
+        double nvid = double.parse(newVal);
+        switch (temperature.runtimeType) {
+          case Celsius:
+            temperature = Celsius(nvid);
+            break;
+          case Fahrenheit:
+            temperature = Fahrenheit(nvid);
+            break;
+          default:
+            throw TypeError();
+        }
+      });
+    }
+  }
+
+  void _onUnitToggle(int? newUnit) {
+    if (newUnit != null) {
+      setState(() {
+        switch (newUnit) {
+          case 0:
+            temperature = Temperature.ensureUnit(temperature, Celsius);
+            break;
+          case 1:
+            temperature = Temperature.ensureUnit(temperature, Fahrenheit);
+            break;
+          default:
+            throw IndexError(newUnit, _unitLbl);
+        }
+        _controller.text = temperature.value.toStringAsFixed(1);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<Box>(
       valueListenable: Hive.box("anitemp_pref").listenable(keys: ["24h_mode"]),
@@ -161,66 +197,27 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                         style: TextStyle(
                                             fontSize: fS,
                                             fontWeight: FontWeight.w500),
-                                        onChanged: (newVal) {
-                                          if (newVal.isNotEmpty) {
-                                            setState(() {
-                                              double nvid =
-                                                  double.parse(newVal);
-                                              switch (temperature.runtimeType) {
-                                                case Celsius:
-                                                  temperature = Celsius(nvid);
-                                                  break;
-                                                case Fahrenheit:
-                                                  temperature =
-                                                      Fahrenheit(nvid);
-                                                  break;
-                                                default:
-                                                  throw TypeError();
-                                              }
-                                            });
-                                          }
-                                        }))))),
+                                        onChanged: _onTextFieldChanged))))),
                     const Divider(),
                     Center(
                         child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                            padding: const EdgeInsetsDirectional.only(end: 12),
-                            child: Text("Temperature unit: ",
-                                style: const TextStyle(fontSize: 16))),
-                        SizedBox(
-                          height: 36,
-                          child: ToggleSwitch(
-                            initialLabelIndex: _unitLbl
-                                .indexWhere((u) => u == temperature.unit),
-                            totalSwitches: _unitLbl.length,
-                            labels: _unitLbl,
-                            onToggle: (newUnit) {
-                              if (newUnit != null) {
-                                setState(() {
-                                  switch (newUnit) {
-                                    case 0:
-                                      temperature = Temperature.ensureUnit(
-                                          temperature, Celsius);
-                                      break;
-                                    case 1:
-                                      temperature = Temperature.ensureUnit(
-                                          temperature, Fahrenheit);
-                                      break;
-                                    default:
-                                      throw IndexError(newUnit, _unitLbl);
-                                  }
-                                  _controller.text =
-                                      temperature.value.toStringAsFixed(1);
-                                });
-                              }
-                            },
-                          ),
-                        )
-                      ],
-                    ))
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                          Padding(
+                              padding:
+                                  const EdgeInsetsDirectional.only(end: 12),
+                              child: Text("Temperature unit: ",
+                                  style: const TextStyle(fontSize: 16))),
+                          SizedBox(
+                              height: 36,
+                              child: ToggleSwitch(
+                                  initialLabelIndex: _unitLbl
+                                      .indexWhere((u) => u == temperature.unit),
+                                  totalSwitches: _unitLbl.length,
+                                  labels: _unitLbl,
+                                  onToggle: _onUnitToggle))
+                        ]))
                   ]))));
 }
 
