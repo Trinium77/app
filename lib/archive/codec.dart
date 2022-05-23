@@ -9,7 +9,7 @@ import '../model/record.dart'
     show TemperatureRecordNode, TemperatureRecordNodeIterableExtension;
 
 final Uint8List _magicBytes =
-    Uint8List.fromList(<int>[0x96, 0x99, 0x67, 0x97, 0x06]);
+    Uint8List.fromList(<int>[0x96, 0x99, 0x67, 0x97, 0x60]);
 
 const int _metadataCap = 4096;
 
