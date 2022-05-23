@@ -13,5 +13,36 @@ Future<Database> openAnitempSqlite() async {
     sqliteDir = await sqliteDir.create(recursive: true);
   }
 
-  return openDatabase(path.join(sqliteDir.path, "anitemp.sqlite3"));
+  return openDatabase(path.join(sqliteDir.path, "anitemp.sqlite3"), version: 1,
+      onConfigure: (db) async {
+    await db.execute("PRAGMA foreign_keys = ON");
+  }, onCreate: (db, version) async {
+    await db.execute('''
+CREATE TABLE anitempuser (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  animal TEXT NOT NULL,
+  image BLOB
+)
+''');
+    await db.execute('''
+CREATE TABLE anitemprecord (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  uid INTEGER NOT NULL,
+  value REAL NOT NULL,
+  unit TEXT NOT NULL,
+  recorded_at TEXT NOT NULL,
+  FOREIGN KEY (uid) REFERENCES anitempuser (id)
+)
+''');
+    await db.execute('''
+CREATE TABLE anitempupref (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  uid INTEGER NOT NULL UNIQUE,
+  unit TEXT NOT NULL,
+  tolerance_cond BOOLEAN NOT NULL CHECK (tolerance_cond IN (0, 1)),
+  FOREIGN KEY (uid) REFERENCES anitempuser (id)
+)
+''');
+  });
 }
