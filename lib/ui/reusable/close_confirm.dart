@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_window_close/flutter_window_close.dart';
 
+import '../theme/colour.dart';
+
 class CloseConfirmScaffold extends StatefulWidget {
   final Scaffold _scaffold;
 
@@ -35,10 +37,8 @@ abstract class _CloseConfirmScaffoldBaseState
                             // TODO: Localize
                             "Yes",
                             style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.red[700]
-                                    : Colors.redAccent))),
+                                color:
+                                    AnitempThemeColourHandler(context).error))),
                     TextButton(
                         onPressed: () => Navigator.pop<bool>(context, false),
                         child: Text(
@@ -46,6 +46,9 @@ abstract class _CloseConfirmScaffoldBaseState
                             "No"))
                   ])) ??
       false;
+
+  SafeArea _saveWrappedScaffold(BuildContext context) =>
+      SafeArea(child: widget._scaffold);
 }
 
 class _CloseConfirmScaffoldDesktopState extends _CloseConfirmScaffoldBaseState {
@@ -61,12 +64,12 @@ class _CloseConfirmScaffoldDesktopState extends _CloseConfirmScaffoldBaseState {
   }
 
   @override
-  Widget build(BuildContext context) => SafeArea(child: widget._scaffold);
+  Widget build(BuildContext context) => _saveWrappedScaffold(context);
 }
 
 class _CloseConfirmScaffoldPortableState
     extends _CloseConfirmScaffoldBaseState {
   @override
   Widget build(BuildContext context) => WillPopScope(
-      onWillPop: requestClose, child: SafeArea(child: widget._scaffold));
+      onWillPop: requestClose, child: _saveWrappedScaffold(context));
 }
