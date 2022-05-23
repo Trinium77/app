@@ -199,11 +199,10 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                             fontWeight: FontWeight.w500),
                                         onChanged: _onTextFieldChanged))))),
                     const Divider(),
-                    Center(
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
                           Padding(
                               padding:
                                   const EdgeInsetsDirectional.only(end: 12),
@@ -217,7 +216,7 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                   totalSwitches: _unitLbl.length,
                                   labels: _unitLbl,
                                   onToggle: _onUnitToggle))
-                        ]))
+                        ]),
                   ]))));
 }
 
