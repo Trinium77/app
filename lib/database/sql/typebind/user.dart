@@ -12,26 +12,11 @@ import '../open.dart';
 
 extension UserSQLiteExtension on User {
   /// Insert new [User] or clone [UserWithId] to the database.
-  ///
-  /// This also initalized default setting of [UserSetting] once [User] insert
-  /// to SQL sucessfully.
   Future<void> insertUserToDb({bool keepOpen = false}) async {
     Database db = await openAnitempSqlite();
 
     try {
       await db.insert("anitempuser", jsonData);
-
-      final int uid = await db
-          .query("anitempuser",
-              columns: <String>["id"], orderBy: "id DESC", limit: 1)
-          .then((r) => r.single["id"] as int);
-
-      await db.insert(
-          "anitempupref",
-          <String, Object?>{"uid": uid}..addAll(UserSetting(
-                  unitPreferece: TemperatureUnitPreference.uses_recorded_unit,
-                  toleranceCondition: true)
-              .jsonData));
     } finally {
       if (!keepOpen) {
         await db.close();
