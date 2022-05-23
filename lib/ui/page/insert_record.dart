@@ -32,7 +32,7 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
     super.initState();
   }
 
-  bool get24hEnabled(Box box) => box.get("24h_mode", defaultValue: true);
+  bool _get24hEnabled(Box box) => box.get("24h_mode", defaultValue: true);
 
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<Box>(
@@ -65,8 +65,8 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                   return ls;
                                 }())
                                     .addPattern(
-                                        get24hEnabled(box) ? "Hms" : "jms"),
-                                use24hFormat: get24hEnabled(box),
+                                        _get24hEnabled(box) ? "Hms" : "jms"),
+                                use24hFormat: _get24hEnabled(box),
                                 selectedDate: recorededAt,
                                 onDateSelected: (newDateTime) {
                                   setState(() {
@@ -79,12 +79,13 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                   children: <Widget>[
                                     const Text("24h"),
                                     Switch(
-                                        value: get24hEnabled(box),
+                                        value: _get24hEnabled(box),
                                         onChanged: (newVal) async {
                                           await box.put("24h_mode", newVal);
                                           setState(() {});
                                         })
                                   ],
-                                ))))
+                                )))),
+                    const Divider(),
                   ])))));
 }
