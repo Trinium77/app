@@ -9,3 +9,7 @@ Please download manually and create all small letter directory of the font name 
 * [Noto Sans HK](https://fonts.google.com/noto/specimen/Noto+Sans+HK)
 * [Noto Sans KR](https://fonts.google.com/noto/specimen/Noto+Sans+KR)
 * [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)
+
+The result should be look like this:
+
+![Result fonts directories](https://user-images.githubusercontent.com/70585816/169859284-2f28a36f-37e3-4858-94e6-ba2948dd1d21.png)
