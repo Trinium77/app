@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../path.dart';
 
-Future<Database> openAnitempSqlite(String filename) async {
+Future<Database> openAnitempSqlite() async {
   Directory sqliteDir =
       Directory(path.join(await getDatabaseDirPath(), "sqlite"));
 
@@ -13,6 +13,5 @@ Future<Database> openAnitempSqlite(String filename) async {
     sqliteDir = await sqliteDir.create(recursive: true);
   }
 
-  return openDatabase(
-      path.join(sqliteDir.path, "${filename.toLowerCase()}.sqlite3"));
+  return openDatabase(path.join(sqliteDir.path, "anitemp.sqlite3"));
 }
