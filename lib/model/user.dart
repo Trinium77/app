@@ -16,9 +16,6 @@ final GZipCodec _lightGzip = GZipCodec(level: 3, memLevel: 5);
 
 /// Based class of [User] with [Archivable] implementation.
 class _UserBase extends Archivable with JsonBasedArchivable {
-  static final Uint8List _dataSection =
-      Uint8List.fromList(<int>[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
-
   final String name;
   final Animal animal;
   final Uint8List? image;
