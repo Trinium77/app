@@ -39,8 +39,8 @@ CREATE TABLE anitemprecord (
 CREATE TABLE anitempupref (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   uid INTEGER NOT NULL UNIQUE,
-  unit TEXT NOT NULL,
-  tolerance_cond BOOLEAN NOT NULL CHECK (tolerance_cond IN (0, 1)),
+  unit_preference TEXT NOT NULL,
+  tolerance_condition BOOLEAN NOT NULL CHECK (tolerance_condition IN (0, 1)),
   FOREIGN KEY (uid) REFERENCES anitempuser (id)
 )
 ''');

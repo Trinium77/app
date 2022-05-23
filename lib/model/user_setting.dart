@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import '../../database/sql/object.dart';
 import '../archive/archivable.dart';
 import 'temperature.dart' show TemperatureUnitPreference;
 
@@ -51,6 +52,30 @@ class _UserSetting extends _UserSettingBase implements UserSetting {
   @override
   UserSetting updateUnitPrefernce(TemperatureUnitPreference unitPreferece) =>
       _UserSetting(
+          unitPreferece: unitPreferece,
+          toleranceCondition: this.toleranceCondition);
+}
+
+class UserSettingWithId extends _UserSettingBase
+    implements UserSetting, SQLIdReference {
+  @override
+  final int id;
+
+  UserSettingWithId(this.id,
+      {required TemperatureUnitPreference unitPreferece,
+      required bool toleranceCondition})
+      : super(unitPreferece, toleranceCondition);
+
+  @override
+  UserSettingWithId updateToleranceCondition(bool toleranceCondition) =>
+      UserSettingWithId(this.id,
+          unitPreferece: this.unitPreferece,
+          toleranceCondition: toleranceCondition);
+
+  @override
+  UserSettingWithId updateUnitPrefernce(
+          TemperatureUnitPreference unitPreferece) =>
+      UserSettingWithId(this.id,
           unitPreferece: unitPreferece,
           toleranceCondition: this.toleranceCondition);
 }
