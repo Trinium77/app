@@ -7,6 +7,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../reusable/close_confirm.dart';
 import 'setting.dart' show AnitempSettingPage;
 
+const String _actualVersion = "0.0.0-alpha+1";
+
 class AnitempHomepage extends StatefulWidget {
   const AnitempHomepage({super.key});
 
@@ -23,7 +25,7 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
     _debugInfo = () async {
       PackageInfo pki = await PackageInfo.fromPlatform();
 
-      return "${pki.appName} ${pki.version}";
+      return "${pki.appName} ${pki.version}\t(actual version: $_actualVersion)";
     }();
   }
 
