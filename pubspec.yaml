@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter 
   cupertino_icons: ^1.0.4
   font_awesome_flutter: ^10.1.0
-  google_fonts: ^2.3.2
+  # google_fonts: ^2.3.2
   provider: ^6.0.2
   hive: ^2.1.0
   hive_flutter: ^1.1.0
@@ -46,3 +46,100 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  fonts:
+    - family: Roboto
+      fonts: 
+        - asset: fonts/roboto/Roboto-Regular.ttf
+        - asset: fonts/roboto/Roboto-Italic.ttf
+          style: italic
+        - asset: fonts/roboto/Roboto-Thin.ttf
+          weight: 100
+        - asset: fonts/roboto/Roboto-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: fonts/roboto/Roboto-Light.ttf
+          weight: 300
+        - asset: fonts/roboto/Roboto-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: fonts/roboto/Roboto-Medium.ttf
+          weight: 500
+        - asset: fonts/roboto/Roboto-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: fonts/roboto/Roboto-Bold.ttf
+          weight: 700
+        - asset: fonts/roboto/Roboto-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: fonts/roboto/Roboto-Black.ttf
+          weight: 900
+        - asset: fonts/roboto/Roboto-BlackItalic.ttf
+          weight: 900
+          style: italic
+    - family: Noto Sans HK
+      fonts: 
+        - asset: fonts/noto_sans_hk/NotoSansHK-Regular.otf
+        - asset: fonts/noto_sans_hk/NotoSansHK-Thin.otf
+          weight: 100
+        - asset: fonts/noto_sans_hk/NotoSansHK-Light.otf
+          weight: 300
+        - asset: fonts/noto_sans_hk/NotoSansHK-Medium.otf
+          weight: 500
+        - asset: fonts/noto_sans_hk/NotoSansHK-Bold.otf
+          weight: 700
+        - asset: fonts/noto_sans_hk/NotoSansHK-Black.otf
+          weight: 900
+    - family: Noto Sans JP
+      fonts: 
+        - asset: fonts/noto_sans_jp/NotoSansJP-Regular.otf
+        - asset: fonts/noto_sans_jp/NotoSansJP-Thin.otf
+          weight: 100
+        - asset: fonts/noto_sans_jp/NotoSansJP-Light.otf
+          weight: 300
+        - asset: fonts/noto_sans_jp/NotoSansJP-Medium.otf
+          weight: 500
+        - asset: fonts/noto_sans_jp/NotoSansJP-Bold.otf
+          weight: 700
+        - asset: fonts/noto_sans_jp/NotoSansJP-Black.otf
+          weight: 900
+    - family: Noto Sans KR
+      fonts: 
+        - asset: fonts/noto_sans_kr/NotoSansKR-Regular.otf
+        - asset: fonts/noto_sans_kr/NotoSansKR-Thin.otf
+          weight: 100
+        - asset: fonts/noto_sans_kr/NotoSansKR-Light.otf
+          weight: 300
+        - asset: fonts/noto_sans_kr/NotoSansKR-Medium.otf
+          weight: 500
+        - asset: fonts/noto_sans_kr/NotoSansKR-Bold.otf
+          weight: 700
+        - asset: fonts/noto_sans_kr/NotoSansKR-Black.otf
+          weight: 900
+    - family: Noto Sans TC
+      fonts: 
+        - asset: fonts/noto_sans_tc/NotoSansTC-Regular.otf
+        - asset: fonts/noto_sans_tc/NotoSansTC-Thin.otf
+          weight: 100
+        - asset: fonts/noto_sans_tc/NotoSansTC-Light.otf
+          weight: 300
+        - asset: fonts/noto_sans_tc/NotoSansTC-Medium.otf
+          weight: 500
+        - asset: fonts/noto_sans_tc/NotoSansTC-Bold.otf
+          weight: 700
+        - asset: fonts/noto_sans_tc/NotoSansTC-Black.otf
+          weight: 900
+    - family: Noto Sans SC
+      fonts: 
+        - asset: fonts/noto_sans_sc/NotoSansSC-Regular.otf
+        - asset: fonts/noto_sans_sc/NotoSansSC-Thin.otf
+          weight: 100
+        - asset: fonts/noto_sans_sc/NotoSansSC-Light.otf
+          weight: 300
+        - asset: fonts/noto_sans_sc/NotoSansSC-Medium.otf
+          weight: 500
+        - asset: fonts/noto_sans_sc/NotoSansSC-Bold.otf
+          weight: 700
+        - asset: fonts/noto_sans_sc/NotoSansSC-Black.otf
+          weight: 900
+

@@ -1,15 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-class AnitempThemeData {
-  static final TextTheme Function([TextTheme?]) _defaultFont =
-      GoogleFonts.robotoTextTheme;
+class AnitempThemeDataGetter {
+  final Locale _locale;
 
-  static ThemeData light() => ThemeData.light()
-      .copyWith(textTheme: _defaultFont(ThemeData.light().textTheme));
+  AnitempThemeDataGetter(this._locale);
 
-  static ThemeData dark() {
-    return ThemeData.dark()
-        .copyWith(textTheme: _defaultFont(ThemeData.dark().textTheme));
+  /// Condition of font:
+  ///
+  /// * Chinese
+  ///   * Is traditional?
+  ///     * Yes: Set language as Chinese (Hong Kong) or Chinese (Macau)?
+  ///       * Yes => `Noto Sans HK`
+  ///       * No => `Noto Sans TC`
+  ///   * No => `Noto Sans SC`
+  /// * Japanese => `Noto Sans JP`
+  /// * Korean => `Noto Sans KR`
+  /// * Non-CJK language => `Roboto`
+  String get _fontName {
+    String noto = "Noto Sans";
+    switch (_locale.languageCode) {
+      case "zh":
+        if (_locale.scriptCode == "Hant") {
+          // If using Trad. Chinese
+          if (<String>["HK", "MO"].contains(_locale.scriptCode)) {
+            // Either set language as Chinese (Hong Kong/Macau)
+            return "$noto HK";
+          }
+          return "$noto TC";
+        }
+        return "$noto SC";
+      case "ko":
+        return "$noto KR";
+      case "jp":
+        return "$noto JP";
+      default:
+        return "Roboto";
+    }
   }
+
+  ThemeData get light =>
+      ThemeData(brightness: Brightness.light, fontFamily: _fontName);
+
+  ThemeData get dark =>
+      ThemeData(brightness: Brightness.dark, fontFamily: _fontName);
 }

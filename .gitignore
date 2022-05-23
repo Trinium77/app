@@ -51,3 +51,4 @@ test/
 *.adta
 
 .vscode/
+/fonts/**/*.[ot]t[fc]
