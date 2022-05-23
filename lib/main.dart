@@ -36,6 +36,8 @@ void main() async {
   if (!gbs.containsKey("locale")) {
     await gbs.put("locale", Locale('en'));
   }
+  // Init preference
+  await Hive.openBox("anitemp_pref");
 
   WidgetsFlutterBinding.ensureInitialized();
 

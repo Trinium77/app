@@ -1,3 +1,5 @@
+import 'package:anitemp/model/temperature.dart';
+import 'package:anitemp/ui/page/insert_record.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -65,5 +67,16 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
         floatingActionButton: FloatingActionButton(
             onPressed: () {}, child: const Icon(Icons.add)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        body: Center(
+          child: TextButton(
+              child: Text("open rec page"),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            InsertRecordPage(initialTemperature: Celsius(37))));
+              }),
+        ),
       ));
 }

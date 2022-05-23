@@ -37,7 +37,8 @@ dependencies:
   csv: ^5.0.1
   pointycastle: ^3.6.0
   toggle_switch: ^2.0.1
-  wheel_chooser: ^1.0.0
+  date_field: ^3.0.1
+  intl: ^0.17.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

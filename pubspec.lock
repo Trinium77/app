@@ -71,6 +71,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  date_field:
+    dependency: "direct main"
+    description:
+      name: date_field
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -176,7 +183,7 @@ packages:
     source: hosted
     version: "4.0.0"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       url: "https://pub.dartlang.org"
@@ -481,13 +488,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
-  wheel_chooser:
-    dependency: "direct main"
-    description:
-      name: wheel_chooser
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   win32:
     dependency: transitive
     description:
