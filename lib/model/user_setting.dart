@@ -25,6 +25,10 @@ abstract class UserSetting implements _UserSettingBase {
       {required TemperatureUnitPreference unitPreferece,
       required bool toleranceCondition}) = _UserSetting;
 
+  factory UserSetting.defaultSetting() => UserSetting(
+      unitPreferece: TemperatureUnitPreference.uses_recorded_unit,
+      toleranceCondition: true);
+
   factory UserSetting.fromBytes(Uint8List bytes) {
     Map<String, dynamic> decoded = JsonBasedArchivable.jbaDecoder(bytes);
 
