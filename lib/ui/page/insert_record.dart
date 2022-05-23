@@ -103,7 +103,9 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
               await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                        title: Text("Please enter body temperature"),
+                        title: Text(
+                            // TODO: Localize
+                            "Please enter body temperature"),
                         actions: <TextButton>[
                           TextButton(
                               onPressed: () => Navigator.pop(context),
@@ -134,7 +136,9 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                     Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: ListTile(
-                            leading: Text("Record date time: "),
+                            leading: Text(
+                                // TODO: Localize
+                                "Record date time: "),
                             title: DateTimeField(
                                 dateFormat: DateFormat.yMd(() {
                                   Locale locale =
@@ -171,7 +175,9 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                   ],
                                 )))),
                     const Divider(),
-                    Text("Body temperature",
+                    Text(
+                        // TODO: Localize
+                        "Body temperature",
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w300)),
                     SizedBox(
@@ -213,7 +219,9 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                           Padding(
                               padding:
                                   const EdgeInsetsDirectional.only(end: 12),
-                              child: Text("Temperature unit: ",
+                              child: Text(
+                                  // TODO: Localize
+                                  "Temperature unit: ",
                                   style: const TextStyle(fontSize: 16))),
                           SizedBox(
                               height: 36,
@@ -237,7 +245,9 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                     onPressed: () {},
                                     child: Padding(
                                         padding: _actionBtnPadding,
-                                        child: Text("Save",
+                                        child: Text(
+                                            // TODO: Localize
+                                            "Save",
                                             style: _actionBtnTxtStyle)),
                                     style: ButtonStyle(
                                         backgroundColor:
@@ -250,7 +260,9 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                     onPressed: () {},
                                     child: Padding(
                                         padding: _actionBtnPadding,
-                                        child: Text("Discard",
+                                        child: Text(
+                                            // TODO: Localize
+                                            "Discard",
                                             style: _actionBtnTxtStyle)),
                                     style: ButtonStyle(
                                         backgroundColor:

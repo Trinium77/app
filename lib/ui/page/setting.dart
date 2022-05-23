@@ -130,8 +130,14 @@ class _AnitempUserSettingPageState
   @override
   List<Widget> buildSettingOptions(BuildContext context) {
     List<Widget> userSection = <Widget>[
-      LabeledDivider(label: "User Setting"),
-      LabeledDivider(label: "App Setting")
+      LabeledDivider(
+          label:
+              // TODO: Localize
+              "User Setting"),
+      LabeledDivider(
+          label:
+              // TODO: Localize
+              "App Setting")
     ];
     return userSection..addAll(super.buildSettingOptions(context));
   }
@@ -147,29 +153,38 @@ class _AnitempUserSettingPageState
                     _AnitempUserSettingLeaveAction>(
                 context: context,
                 builder: (context) => AlertDialog(
-                        title: Text("Leave setting"),
-                        content:
-                            Text("Do you want to save modified user data?"),
+                        title: Text(
+                            // TODO: Localize
+                            "Leave setting"),
+                        content: Text(
+                            // TODO: Localize
+                            "Do you want to save modified user data?"),
                         actions: <TextButton>[
                           TextButton(
                               onPressed: () =>
                                   Navigator.pop<_AnitempUserSettingLeaveAction>(
                                       context,
                                       _AnitempUserSettingLeaveAction.save),
-                              child: Text("Save")),
+                              child: Text(
+                                  // TODO: Localize
+                                  "Save")),
                           TextButton(
                               onPressed: () =>
                                   Navigator.pop<_AnitempUserSettingLeaveAction>(
                                       context,
                                       _AnitempUserSettingLeaveAction
                                           .without_save),
-                              child: Text("Don't save")),
+                              child: Text(
+                                  // TODO: Localize
+                                  "Don't save")),
                           TextButton(
                               onPressed: () =>
                                   Navigator.pop<_AnitempUserSettingLeaveAction>(
                                       context,
                                       _AnitempUserSettingLeaveAction.cancel),
-                              child: Text("Cancel"))
+                              child: Text(
+                                  // TODO: Localize
+                                  "Cancel"))
                         ])) ??
             _AnitempUserSettingLeaveAction.cancel;
 
