@@ -12,6 +12,8 @@ import 'database/hive/type_adapters.dart';
 import 'ui/app.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   if (Platform.isLinux || Platform.isWindows) {
     // Init SQLite dynamic library for Linux and Windows.
     sqfliteFfiInit();
@@ -38,8 +40,6 @@ void main() async {
   }
   // Init preference
   await Hive.openBox("anitemp_pref");
-
-  WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
     window_size.setWindowMinSize(const Size(800, 450));
