@@ -50,5 +50,6 @@ test/
 
 *.adta
 
-.vscode/
+.vscode/**
+!.vscode/settings.json
 /fonts/**/*.[ot]t[fc]
