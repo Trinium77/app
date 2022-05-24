@@ -91,6 +91,48 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
     }
   }
 
+  Text _dtfLbl(BuildContext context) => Text(
+      // TODO: Localize
+      "Record date time: ");
+
+  DateTimeField _dtf(Box box, BuildContext context) => DateTimeField(
+      dateFormat: DateFormat.yMd(() {
+        Locale locale = Localizations.localeOf(context);
+
+        String ls = "${locale.languageCode}";
+
+        if (locale.countryCode != null) {
+          ls += "_${locale.countryCode}";
+        }
+
+        return ls;
+      }())
+          .addPattern(_get24hEnabled(box) ? "Hms" : "jms"),
+      use24hFormat: _get24hEnabled(box),
+      selectedDate: recorededAt,
+      onDateSelected: (newDateTime) {
+        setState(() {
+          recorededAt = newDateTime;
+        });
+      });
+
+  Row _switch24h(Box box, BuildContext context,
+          {MainAxisAlignment? mainAxisAlignment,
+          CrossAxisAlignment? crossAxisAlignment}) =>
+      Row(
+        mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+        crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
+        children: <Widget>[
+          const Text("24h"),
+          Switch(
+              value: _get24hEnabled(box),
+              onChanged: (newVal) async {
+                await box.put("24h_mode", newVal);
+                setState(() {});
+              })
+        ],
+      );
+
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<Box>(
       valueListenable: Hive.box("anitemp_pref").listenable(keys: ["24h_mode"]),
@@ -136,45 +178,39 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                   children: <Widget>[
                     Padding(
                         padding: const EdgeInsets.only(top: 4),
-                        child: ListTile(
-                            leading: Text(
-                                // TODO: Localize
-                                "Record date time: "),
-                            title: DateTimeField(
-                                dateFormat: DateFormat.yMd(() {
-                                  Locale locale =
-                                      Localizations.localeOf(context);
-
-                                  String ls = "${locale.languageCode}";
-
-                                  if (locale.countryCode != null) {
-                                    ls += "_${locale.countryCode}";
-                                  }
-
-                                  return ls;
-                                }())
-                                    .addPattern(
-                                        _get24hEnabled(box) ? "Hms" : "jms"),
-                                use24hFormat: _get24hEnabled(box),
-                                selectedDate: recorededAt,
-                                onDateSelected: (newDateTime) {
-                                  setState(() {
-                                    recorededAt = newDateTime;
-                                  });
-                                }),
-                            trailing: FittedBox(
-                                fit: BoxFit.contain,
-                                child: Row(
-                                  children: <Widget>[
-                                    const Text("24h"),
-                                    Switch(
-                                        value: _get24hEnabled(box),
-                                        onChanged: (newVal) async {
-                                          await box.put("24h_mode", newVal);
-                                          setState(() {});
-                                        })
-                                  ],
-                                )))),
+                        child: LayoutBuilder(
+                            builder: (context, constraints) => constraints
+                                        .maxWidth >
+                                    500
+                                ? ListTile(
+                                    leading: _dtfLbl(context),
+                                    title: _dtf(box, context),
+                                    trailing: FittedBox(
+                                        fit: BoxFit.contain,
+                                        child: _switch24h(box, context)))
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Padding(
+                                                padding:
+                                                    EdgeInsetsDirectional.only(
+                                                        end: 12),
+                                                child: _dtfLbl(context)),
+                                            Expanded(child: _dtf(box, context))
+                                          ]),
+                                      _switch24h(box, context,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center)
+                                    ],
+                                  ))),
                     const Divider(),
                     Text(
                         // TODO: Localize
