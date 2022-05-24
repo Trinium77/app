@@ -1,7 +1,8 @@
-flutter_icon:
+flutter_icons:
   android: true
   ios: true
-  image_path_android: logo/android/icon.png
-  image_path_ios: logo/ios/icon.png
+  remove_alpha_ios: true
+  image_path_android: logo/basic/icon.png
+  image_path_ios: logo/basic/icon.png
   adaptive_icon_background: "logo/adaptive/bg.png"
   adaptive_icon_foreground: "logo/adaptive/fg.png"

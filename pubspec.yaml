@@ -46,6 +46,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - logo/vector/icon.svg
   fonts:
     - family: Roboto
       fonts: 
