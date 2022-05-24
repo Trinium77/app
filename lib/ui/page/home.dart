@@ -27,7 +27,7 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
     _debugInfo = () async {
       PackageInfo pki = await PackageInfo.fromPlatform();
 
-      return "${pki.appName} ${pki.version}\t(actual version: $_actualVersion)";
+      return "${pki.appName} ${pki.version}    (actual version: $_actualVersion)";
     }();
   }
 
