@@ -49,42 +49,36 @@ abstract class _AnitempSettingPageBaseState<T extends AnitempSettingPage>
   List<Widget> buildSettingOptions(BuildContext context) => <Widget>[
         ListTile(
             title: Text(AnitempLocales.of(context).setting_theme_mode),
-            trailing: SizedBox(
-                width: 200,
-                child: DropdownButton<ThemeMode>(
-                    isExpanded: true,
-                    items: ThemeMode.values
-                        .map((t) => DropdownMenuItem<ThemeMode>(
-                            value: t, child: Text(t.displayName(context))))
-                        .toList(),
-                    value: _globalSetting.get("theme_mode"),
-                    onChanged: (newThemeMode) async {
-                      if (newThemeMode != null) {
-                        await _globalSetting.put("theme_mode", newThemeMode);
-                        setState(() {});
-                      }
-                    }))),
+            trailing: DropdownButton<ThemeMode>(
+                items: ThemeMode.values
+                    .map((t) => DropdownMenuItem<ThemeMode>(
+                        value: t, child: Text(t.displayName(context))))
+                    .toList(),
+                value: _globalSetting.get("theme_mode"),
+                onChanged: (newThemeMode) async {
+                  if (newThemeMode != null) {
+                    await _globalSetting.put("theme_mode", newThemeMode);
+                    setState(() {});
+                  }
+                })),
         ListTile(
             title: Text(AnitempLocales.of(context).setting_language),
-            trailing: SizedBox(
-                width: 300,
-                child: DropdownButton<Locale>(
-                    isExpanded: true,
-                    items: AnitempLocales.supportedLocales
-                        .map((l) => DropdownMenuItem<Locale>(
-                            value: l,
-                            child: Text(
-                                LocaleNames.of(context)!.nameOf(
-                                    l.toLanguageTag().replaceAll("-", "_"))!,
-                                style: const TextStyle(fontSize: 12.5))))
-                        .toList(),
-                    value: _globalSetting.get("locale"),
-                    onChanged: (newLocale) async {
-                      if (newLocale != null) {
-                        await _globalSetting.put("locale", newLocale);
-                        setState(() {});
-                      }
-                    })))
+            trailing: DropdownButton<Locale>(
+                items: AnitempLocales.supportedLocales
+                    .map((l) => DropdownMenuItem<Locale>(
+                        value: l,
+                        child: Text(
+                            LocaleNames.of(context)!.nameOf(
+                                l.toLanguageTag().replaceAll("-", "_"))!,
+                            style: const TextStyle(fontSize: 13.5))))
+                    .toList(),
+                value: _globalSetting.get("locale"),
+                onChanged: (newLocale) async {
+                  if (newLocale != null) {
+                    await _globalSetting.put("locale", newLocale);
+                    setState(() {});
+                  }
+                }))
       ];
 
   @override
