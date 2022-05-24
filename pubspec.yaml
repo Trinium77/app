@@ -39,6 +39,7 @@ dependencies:
   toggle_switch: ^2.0.1
   date_field: ^3.0.1
   intl: ^0.17.0
+  flutter_native_splash: ^2.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
