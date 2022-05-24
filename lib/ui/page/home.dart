@@ -9,6 +9,8 @@ import 'setting.dart' show AnitempSettingPage;
 
 const String _actualVersion = "0.0.0-alpha+1";
 
+enum _AddUserAction { create, import }
+
 class AnitempHomepage extends StatefulWidget {
   const AnitempHomepage({super.key});
 
@@ -58,6 +60,30 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
     return c;
   }
 
+  void _newUserAction(BuildContext context) async {
+    _AddUserAction? action = await showDialog(
+        context: context,
+        builder: (context) => SimpleDialog(title: Text(
+                // TODO: Localize
+                "Add user"), children: <Widget>[
+              ListTile(
+                  leading: const Icon(Icons.person_add_alt_sharp),
+                  title: Text(
+
+                      /// TODO: Localize
+                      "Create new user"),
+                  onTap: () => Navigator.pop(context, _AddUserAction.create)),
+              const Divider(),
+              ListTile(
+                  leading: const Icon(Icons.file_download),
+                  title: Text(
+
+                      /// TODO: Localize
+                      "Import user..."),
+                  onTap: () => Navigator.pop(context, _AddUserAction.import))
+            ]));
+  }
+
   @override
   Widget build(BuildContext context) => CloseConfirmScaffold(
           scaffold: Scaffold(
@@ -67,7 +93,9 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
                 children: _bottomBarChildren(context)),
             shape: const CircularNotchedRectangle()),
         floatingActionButton: FloatingActionButton(
-            onPressed: () {}, child: const Icon(Icons.add)),
+            tooltip: "Add user", // TODO: Localize
+            onPressed: () => _newUserAction(context),
+            child: const Icon(Icons.add)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: Center(
           child: TextButton(
