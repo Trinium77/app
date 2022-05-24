@@ -1,5 +1,5 @@
-arb-dir: local/arb
+arb-dir: locale/arb
 template-arb-file: arb_en.arb
-output-localization-file: locals.dart
+output-localization-file: locales.dart
 output-class: AnitempLocales
 nullable-getter: false
