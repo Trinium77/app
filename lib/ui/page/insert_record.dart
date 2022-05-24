@@ -187,7 +187,9 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                                     title: _dtf(box, context),
                                     trailing: FittedBox(
                                         fit: BoxFit.contain,
-                                        child: _switch24h(box, context)))
+                                        child: _switch24h(box, context,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center)))
                                 : Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
