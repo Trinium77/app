@@ -8,7 +8,7 @@ Future<String> getDatabaseDirPath() async {
 
   try {
     dbdir = await path_provider.getLibraryDirectory();
-  } on UnimplementedError {
+  } catch (_) {
     dbdir = Directory(path.join(
         await path_provider
             .getApplicationSupportDirectory()
