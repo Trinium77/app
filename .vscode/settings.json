@@ -2,6 +2,9 @@
     "yaml.schemas": {
         "https://osp.rk0cc.xyz/flutter-pub-cli-config-schema/flutter_launcher_icons.json": [
             "/iconconf.yaml"
+        ],
+        "https://osp.rk0cc.xyz/flutter-pub-cli-config-schema/flutter_native_splash.json": [
+            "/flutter_native_splash.yaml"
         ]
     }
 }
