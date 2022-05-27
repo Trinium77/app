@@ -110,7 +110,7 @@ extension TemperatureRecordNodeIterableExtension<
   }
 
   ArchivableTemperatureRecordNodeIterable toArchivable() =>
-      ArchivableTemperatureRecordNodeIterable(this);
+      ArchivableTemperatureRecordNodeIterable(this, growable: false);
 
   static List<TemperatureRecordNode> parseFromCsv(List<List<String>> csv) {
     List<TemperatureRecordNode> parsed = <TemperatureRecordNode>[];
@@ -150,8 +150,9 @@ class ArchivableTemperatureRecordNodeIterable extends Archivable
   final Iterable<TemperatureRecordNode> _source;
 
   ArchivableTemperatureRecordNodeIterable(
-      Iterable<TemperatureRecordNode> source)
-      : this._source = List.from(source);
+      Iterable<TemperatureRecordNode> source,
+      {bool growable = true})
+      : this._source = List.from(source, growable: growable);
 
   factory ArchivableTemperatureRecordNodeIterable.fromBytes(Uint8List bytes) {
     List<List<String>> csv =

@@ -1,12 +1,18 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:anitemp/model/user_setting.dart';
 import 'package:meta/meta.dart';
 import 'package:pointycastle/digests/sha3.dart';
 
 import '../model/user.dart';
 import '../model/record.dart'
-    show TemperatureRecordNode, TemperatureRecordNodeIterableExtension;
+    show
+        ArchivableTemperatureRecordNodeIterable,
+        TemperatureRecordNode,
+        TemperatureRecordNodeIterableExtension;
+
+typedef _Serializer = Uint8List Function();
 
 final Uint8List _magicBytes =
     Uint8List.fromList(<int>[0x96, 0x99, 0x67, 0x97, 0x60]);
@@ -17,8 +23,13 @@ const int _metadataCap = 4096;
 @sealed
 class AnitempCodecData {
   final User user;
+  final Iterable<TemperatureRecordNode> _records;
+  final UserSetting userSetting;
 
-  AnitempCodecData(this.user);
+  AnitempCodecData(this.user, this._records, this.userSetting);
+
+  ArchivableTemperatureRecordNodeIterable get records =>
+      _records.toArchivable();
 }
 
 @sealed
@@ -57,8 +68,16 @@ class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
         <int>[]; // Indicate index of start section (does not included metadata)
 
     BytesBuilder ctxb = BytesBuilder();
-    listDict.add(0);
-    ctxb.add(input.user.toBytes());
+    Iterable<_Serializer> addOrder = <_Serializer>[
+      input.user.toBytes,
+      input.records.toBytes,
+      input.userSetting.toBytes
+    ];
+
+    for (_Serializer s in addOrder) {
+      listDict.add(ctxb.length);
+      ctxb.add(s());
+    }
 
     Uint8List ctxl = ctxb.toBytes();
     final SHA3Digest sha3 = SHA3Digest(512);
