@@ -1,8 +1,8 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:anitemp/archive/archivable.dart';
 import 'package:anitemp/model/user_setting.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
@@ -46,11 +46,12 @@ class _AnitempMetadataMap extends MapBase<String, Object> {
 }
 
 typedef _Serializer = Uint8List Function();
+typedef _Parser = Archivable Function(Uint8List);
 
 final Uint8List _magicBytes =
     Uint8List.fromList(<int>[0x96, 0x99, 0x67, 0x97, 0x60]);
 
-const int _metadataCap = 4096;
+int get magicBytesLength => _magicBytes.length;
 
 Uint8List _calcHash(Uint8List context) {
   final SHA3Digest sha3 = SHA3Digest(512);
@@ -63,23 +64,6 @@ class NotAnitempFormatException extends FormatException {
         super("This format is not uses for Anitemp data archive", magicBytes);
 }
 
-class NotAnitempFileException extends FileSystemException
-    implements NotAnitempFormatException {
-  final File _file;
-
-  NotAnitempFileException._(this._file);
-
-  @override
-  String get message =>
-      "File '${_file.absolute.path}' is not a valid Anitemp data archive file.";
-
-  @override
-  int? get offset => null;
-
-  @override
-  get source => _file.readAsBytesSync().sublist(0, _magicBytes.length);
-}
-
 @immutable
 @sealed
 class AnitempCodecData {
@@ -88,6 +72,38 @@ class AnitempCodecData {
   final UserSetting userSetting;
 
   AnitempCodecData(this.user, this._records, this.userSetting);
+
+  factory AnitempCodecData._resolve(List<int> dict, Uint8List context) {
+    final List<_Parser> aFactory = <_Parser>[
+      User.fromByte,
+      ArchivableTemperatureRecordNodeIterable.fromBytes,
+      UserSetting.fromBytes
+    ];
+
+    final List<Archivable?> parsed = <Archivable>[];
+
+    for (int fidx = 0; fidx < aFactory.length || fidx < dict.length; fidx++) {
+      Uint8List ctxASec;
+
+      try {
+        ctxASec = context.sublist(dict[fidx], dict[fidx + 1]);
+      } on RangeError {
+        // When reached last dict
+        ctxASec = context.sublist(dict[fidx]);
+      }
+
+      parsed.add(aFactory[fidx](ctxASec));
+    }
+
+    if (aFactory.length > dict.length) {
+      // Fill null for applyng default setting that ensure backward compatable.
+      parsed.addAll(
+          List.generate(aFactory.length - dict.length, (index) => null));
+    }
+
+    return AnitempCodecData(parsed[0] as User,
+        parsed[1] as Iterable<TemperatureRecordNode>, parsed[2] as UserSetting);
+  }
 
   ArchivableTemperatureRecordNodeIterable get records =>
       _records.toArchivable();
@@ -116,9 +132,29 @@ class AnitempDecoder extends Converter<Uint8List, AnitempCodecData> {
       throw NotAnitempFormatException._(mb);
     }
 
-    List<int> metadataJson = <int>[];
+    final List<int> metadataJsonByte = input
+        .sublist(input.firstWhere((element) => element == 123),
+            input.firstWhere((element) => element == 125))
+        .toList(growable: false);
 
-    throw UnimplementedError();
+    final Map<String, dynamic> metadataJson =
+        jsonDecode(ascii.decode(metadataJsonByte));
+
+    final List<int> dict = metadataJson["context_pos"];
+    final int hashLength = metadataJson["hash_length"];
+
+    final int ctxStart =
+        _magicBytes.length + metadataJsonByte.length + hashLength;
+
+    final Uint8List providedHash = Uint8List.fromList(
+        input.sublist(ctxStart - hashLength, ctxStart).toList());
+
+    final Uint8List context = input.sublist(ctxStart);
+
+    assert(const ListEquality().equals(providedHash, _calcHash(context)),
+        "Data context contains invalid modification.");
+
+    return AnitempCodecData._resolve(dict, context);
   }
 }
 
@@ -128,8 +164,7 @@ class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
 
   @override
   Uint8List convert(AnitempCodecData input) {
-    _AnitempMetadataMap posDict =
-        _AnitempMetadataMap(<String, Object>{"metadata_cap": _metadataCap});
+    _AnitempMetadataMap posDict = _AnitempMetadataMap(<String, Object>{});
 
     List<int> listDict =
         <int>[]; // Indicate index of start section (does not included metadata)
