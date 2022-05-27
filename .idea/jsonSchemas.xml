@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsonSchemaMappingsProjectConfiguration">
+    <state>
+      <map>
+        <entry key="flutter_launcher_icons">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="flutter_launcher_icons" />
+              <option name="relativePathToSchema" value="https://osp.rk0cc.xyz/flutter-pub-cli-config-schema/flutter_launcher_icons.json" />
+              <option name="schemaVersion" value="JSON Schema version 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="iconconf.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="flutter_native_splash">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="flutter_native_splash" />
+              <option name="relativePathToSchema" value="https://osp.rk0cc.xyz/flutter-pub-cli-config-schema/flutter_native_splash.json" />
+              <option name="schemaVersion" value="JSON Schema version 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="flutter_native_splash.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>
