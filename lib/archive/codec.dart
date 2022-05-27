@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:anitemp/model/user_setting.dart';
+import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:pointycastle/digests/sha3.dart';
 
@@ -18,6 +20,34 @@ final Uint8List _magicBytes =
     Uint8List.fromList(<int>[0x96, 0x99, 0x67, 0x97, 0x60]);
 
 const int _metadataCap = 4096;
+
+Uint8List _calcHash(Uint8List context) {
+  final SHA3Digest sha3 = SHA3Digest(512);
+  return sha3.process(context);
+}
+
+class NotAnitempFormatException extends FormatException {
+  NotAnitempFormatException._(Uint8List magicBytes)
+      : assert(!const ListEquality().equals(magicBytes, _magicBytes)),
+        super("This format is not uses for Anitemp data archive", magicBytes);
+}
+
+class NotAnitempFileException extends FileSystemException
+    implements NotAnitempFormatException {
+  final File _file;
+
+  NotAnitempFileException._(this._file);
+
+  @override
+  String get message =>
+      "File '${_file.absolute.path}' is not a valid Anitemp data archive file.";
+
+  @override
+  int? get offset => null;
+
+  @override
+  get source => _file.readAsBytesSync().sublist(0, _magicBytes.length);
+}
 
 @immutable
 @sealed
@@ -49,7 +79,15 @@ class AnitempDecoder extends Converter<Uint8List, AnitempCodecData> {
 
   @override
   AnitempCodecData convert(Uint8List input) {
-    // TODO: implement convert
+    final Uint8List mb = input.sublist(0, _magicBytes.length);
+
+    if (!const ListEquality().equals(mb, _magicBytes)) {
+      throw NotAnitempFormatException._(mb);
+    }
+
+    BytesBuilder dictReader = BytesBuilder();
+    final Uint8List dictHashCtx = input.sublist(_magicBytes.length);
+
     throw UnimplementedError();
   }
 }
@@ -80,8 +118,7 @@ class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
     }
 
     Uint8List ctxl = ctxb.toBytes();
-    final SHA3Digest sha3 = SHA3Digest(512);
-    Uint8List ctxHash = sha3.process(ctxl);
+    Uint8List ctxHash = _calcHash(ctxl);
 
     posDict["hash_length"] = ctxHash.length;
     posDict["context_pos"] = listDict;
