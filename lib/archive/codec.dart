@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -13,6 +14,36 @@ import '../model/record.dart'
         ArchivableTemperatureRecordNodeIterable,
         TemperatureRecordNode,
         TemperatureRecordNodeIterableExtension;
+
+class _AnitempMetadataMap extends MapBase<String, Object> {
+  final Map<String, Object> _source;
+
+  _AnitempMetadataMap([Map<String, Object>? source])
+      : this._source = source ?? <String, Object>{};
+
+  @override
+  Object operator [](Object? key) => _source[key]!;
+
+  @override
+  void operator []=(String key, Object value) {
+    if (value is Map) {
+      throw TypeError();
+    }
+
+    _source[key] = value;
+  }
+
+  @override
+  void clear() {
+    _source.clear();
+  }
+
+  @override
+  Iterable<String> get keys => _source.keys;
+
+  @override
+  Object remove(Object? key) => _source.remove(key)!;
+}
 
 typedef _Serializer = Uint8List Function();
 
@@ -98,9 +129,8 @@ class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
 
   @override
   Uint8List convert(AnitempCodecData input) {
-    Map<String, dynamic> posDict = <String, dynamic>{
-      "metadata_cap": _metadataCap
-    };
+    _AnitempMetadataMap posDict =
+        _AnitempMetadataMap(<String, Object>{"metadata_cap": _metadataCap});
 
     List<int> listDict =
         <int>[]; // Indicate index of start section (does not included metadata)
@@ -125,14 +155,9 @@ class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
 
     BytesBuilder pack = BytesBuilder()
       ..add(_magicBytes)
-      ..add(utf8.encode(jsonEncode(posDict)));
-
-    int fillLength = _metadataCap - pack.length;
-    pack
-      ..add(List.filled(fillLength - ctxHash.length, 0))
-      ..add(ctxHash);
-
-    pack.add(ctxl);
+      ..add(utf8.encode(jsonEncode(posDict)))
+      ..add(ctxHash)
+      ..add(ctxl);
 
     return pack.toBytes();
   }
