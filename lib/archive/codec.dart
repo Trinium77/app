@@ -116,8 +116,7 @@ class AnitempDecoder extends Converter<Uint8List, AnitempCodecData> {
       throw NotAnitempFormatException._(mb);
     }
 
-    BytesBuilder dictReader = BytesBuilder();
-    final Uint8List dictHashCtx = input.sublist(_magicBytes.length);
+    List<int> metadataJson = <int>[];
 
     throw UnimplementedError();
   }
@@ -155,7 +154,7 @@ class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
 
     BytesBuilder pack = BytesBuilder()
       ..add(_magicBytes)
-      ..add(utf8.encode(jsonEncode(posDict)))
+      ..add(ascii.encode(jsonEncode(posDict)))
       ..add(ctxHash)
       ..add(ctxl);
 
