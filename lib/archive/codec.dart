@@ -2,19 +2,19 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:anitemp/archive/archivable.dart';
-import 'package:anitemp/model/user_setting.dart';
 import 'package:collection/collection.dart';
 import 'package:lzma/lzma.dart';
 import 'package:meta/meta.dart';
 import 'package:pointycastle/digests/sha3.dart';
 
-import '../model/user.dart';
 import '../model/record.dart'
     show
         ArchivableTemperatureRecordNodeIterable,
         TemperatureRecordNode,
         TemperatureRecordNodeIterableExtension;
+import '../model/user.dart';
+import '../model/user_setting.dart';
+import 'archivable.dart';
 
 class _KeyUnexistedError extends ArgumentError {
   final Object? _key;

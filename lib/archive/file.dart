@@ -20,7 +20,13 @@ class NotAnitempFileException extends FileSystemException
   int? get offset => null;
 
   @override
-  get source => _file.readAsBytesSync().sublist(0, magicBytesLength);
+  get source {
+    try {
+      return _file.readAsBytesSync().sublist(0, magicBytesLength);
+    } on FileSystemException {
+      return null;
+    }
+  }
 }
 
 class AnitempFileHandler {
