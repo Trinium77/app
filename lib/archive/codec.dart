@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:anitemp/archive/archivable.dart';
 import 'package:anitemp/model/user_setting.dart';
 import 'package:collection/collection.dart';
+import 'package:lzma/lzma.dart';
 import 'package:meta/meta.dart';
 import 'package:pointycastle/digests/sha3.dart';
 
@@ -15,6 +16,17 @@ import '../model/record.dart'
         TemperatureRecordNode,
         TemperatureRecordNodeIterableExtension;
 
+class _KeyUnexistedError extends ArgumentError {
+  final Object? _key;
+
+  _KeyUnexistedError(this._key)
+      : assert(_key is String),
+        super();
+
+  @override
+  get message => "No $_key found in this map.";
+}
+
 class _AnitempMetadataMap extends MapBase<String, Object> {
   final Map<String, Object> _source;
 
@@ -22,7 +34,13 @@ class _AnitempMetadataMap extends MapBase<String, Object> {
       : this._source = source ?? <String, Object>{};
 
   @override
-  Object operator [](Object? key) => _source[key]!;
+  Object operator [](Object? key) {
+    if (!_source.containsKey(key)) {
+      throw _KeyUnexistedError(key);
+    }
+
+    return _source[key]!;
+  }
 
   @override
   void operator []=(String key, Object value) {
@@ -64,13 +82,19 @@ class NotAnitempFormatException extends FormatException {
         super("This format is not uses for Anitemp data archive", magicBytes);
 }
 
+/// An object as agent role to convert between [Uint8List] and Anitemp data
+/// objects.
 @immutable
 @sealed
 class AnitempCodecData {
+  /// [User] data.
   final User user;
   final Iterable<TemperatureRecordNode> _records;
+
+  /// Setting preference of current [user].
   final UserSetting userSetting;
 
+  /// Construct [AnitempCodecData] from object.
   AnitempCodecData(this.user, this._records, this.userSetting);
 
   factory AnitempCodecData._resolve(List<int> dict, Uint8List context) {
@@ -105,12 +129,17 @@ class AnitempCodecData {
         parsed[1] as Iterable<TemperatureRecordNode>, parsed[2] as UserSetting);
   }
 
+  /// Get [user]'s recorded data.
   ArchivableTemperatureRecordNodeIterable get records =>
       _records.toArchivable();
 }
 
+/// [Codec] uses convert between [AnitempCodecData] and [Uint8List].
+///
+/// If data encoded with [lzma], please uses [ComprassedAnitempCodec].
 @sealed
 class AnitempCodec extends Codec<AnitempCodecData, Uint8List> {
+  /// Construct new [AnitempCodec].
   const AnitempCodec();
 
   @override
@@ -120,6 +149,7 @@ class AnitempCodec extends Codec<AnitempCodecData, Uint8List> {
   AnitempEncoder get encoder => const AnitempEncoder._();
 }
 
+/// Decode [Uint8List] to [AnitempCodecData].
 @sealed
 class AnitempDecoder extends Converter<Uint8List, AnitempCodecData> {
   const AnitempDecoder._();
@@ -158,6 +188,7 @@ class AnitempDecoder extends Converter<Uint8List, AnitempCodecData> {
   }
 }
 
+/// Encode [AnitempCodecData] to [Uint8List].
 @sealed
 class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
   const AnitempEncoder._();
@@ -194,5 +225,45 @@ class AnitempEncoder extends Converter<AnitempCodecData, Uint8List> {
       ..add(ctxl);
 
     return pack.toBytes();
+  }
+}
+
+/// An [AnitempCodec] with [lzma] compression.
+class CompressedAnitempCodec extends AnitempCodec {
+  /// Construct [CompressedAnitempCodec].
+  const CompressedAnitempCodec();
+
+  @override
+  AnitempEncoder get encoder => const CompressedAnitempEncoder._();
+
+  @override
+  AnitempDecoder get decoder => const CompressedAnitempDecoder._();
+}
+
+/// Encode compressed [AnitempCodecData] to [Uint8List].
+class CompressedAnitempEncoder extends AnitempEncoder {
+  const CompressedAnitempEncoder._() : super._();
+
+  @override
+  Uint8List convert(AnitempCodecData input) {
+    List<int> compressed = lzma.encode(super.convert(input));
+
+    return compressed is Uint8List
+        ? compressed
+        : Uint8List.fromList(compressed);
+  }
+}
+
+/// Decode [Uint8List] to [AnitempCodecData] with decompression.
+class CompressedAnitempDecoder extends AnitempDecoder {
+  const CompressedAnitempDecoder._() : super._();
+
+  @override
+  AnitempCodecData convert(Uint8List input) {
+    List<int> decompressed = lzma.decode(input);
+
+    return super.convert(decompressed is Uint8List
+        ? decompressed
+        : Uint8List.fromList(decompressed));
   }
 }
