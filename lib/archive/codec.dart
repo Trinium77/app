@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
-import 'package:lzma/lzma.dart';
+import 'package:lzma/lzma.dart' show lzma;
 import 'package:meta/meta.dart';
 import 'package:pointycastle/digests/sha3.dart';
 
@@ -76,6 +76,7 @@ Uint8List _calcHash(Uint8List context) {
   return sha3.process(context);
 }
 
+@sealed
 class NotAnitempFormatException extends FormatException {
   NotAnitempFormatException._(Uint8List magicBytes)
       : assert(!const ListEquality().equals(magicBytes, _magicBytes)),

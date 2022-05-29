@@ -2,10 +2,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show compute;
+import 'package:meta/meta.dart';
+
 import 'codec.dart';
 
 const AnitempFileHandler anitempFileHandler = AnitempFileHandler();
 
+@sealed
 class NotAnitempFileException extends FileSystemException
     implements NotAnitempFormatException {
   final File _file;
@@ -29,6 +32,7 @@ class NotAnitempFileException extends FileSystemException
   }
 }
 
+@sealed
 class AnitempFileHandler {
   static const String fileExt = ".atad";
   final AnitempCodec _codec;
