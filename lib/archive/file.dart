@@ -45,7 +45,13 @@ class AnitempFileHandler {
   Future<AnitempCodecData> read(File file) async {
     _extCheck(file);
 
-    return await file.readAsBytes().then(
-        (bytes) => compute<Uint8List, AnitempCodecData>(_codec.decode, bytes));
+    Uint8List fileData = await file.readAsBytes();
+
+    try {
+      return await compute<Uint8List, AnitempCodecData>(
+          _codec.decode, fileData);
+    } on NotAnitempFormatException {
+      throw NotAnitempFileException._(file);
+    }
   }
 }
