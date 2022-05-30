@@ -24,7 +24,7 @@ jobs:
           - ubuntu-22.04
         flutter-channel:
           - stable
-          - dev
+          # - dev
           - beta
     runs-on: ${{ matrix.os }}
     steps:
