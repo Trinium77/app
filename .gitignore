@@ -47,4 +47,3 @@ app.*.map.json
 
 .vscode/**
 !.vscode/settings.json
-/fonts/**/*.[ot]t[fc]
