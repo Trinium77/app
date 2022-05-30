@@ -12,6 +12,7 @@ jobs:
     name: Unit test
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         os:
           - windows-latest
@@ -29,6 +30,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.2
+      - name: Submodule init
+        run: git submodule update --init --recursive
       - name: Setup Flutter action
         uses: subosito/flutter-action@v2.4.0
         with:
