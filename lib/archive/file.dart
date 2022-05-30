@@ -2,10 +2,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show compute;
+import 'package:meta/meta.dart';
+
 import 'codec.dart';
 
 const AnitempFileHandler anitempFileHandler = AnitempFileHandler();
 
+@sealed
 class NotAnitempFileException extends FileSystemException
     implements NotAnitempFormatException {
   final File _file;
@@ -20,9 +23,16 @@ class NotAnitempFileException extends FileSystemException
   int? get offset => null;
 
   @override
-  get source => _file.readAsBytesSync().sublist(0, magicBytesLength);
+  get source {
+    try {
+      return _file.readAsBytesSync().sublist(0, magicBytesLength);
+    } on FileSystemException {
+      return null;
+    }
+  }
 }
 
+@sealed
 class AnitempFileHandler {
   static const String fileExt = ".atad";
   final AnitempCodec _codec;
@@ -48,7 +58,11 @@ class AnitempFileHandler {
   Future<AnitempCodecData> read(File file) async {
     _extCheck(file);
 
-    return await compute<File, AnitempCodecData>(
-        (f) => _codec.decode(f.readAsBytesSync()), file);
+    try {
+      return await compute<File, AnitempCodecData>(
+          (f) => _codec.decode(f.readAsBytesSync()), file);
+    } on NotAnitempFormatException {
+      throw NotAnitempFileException._(file);
+    }
   }
 }
