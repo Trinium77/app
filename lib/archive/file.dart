@@ -38,14 +38,17 @@ class AnitempFileHandler {
   Future<File> write(File file, AnitempCodecData data) async {
     _extCheck(file);
 
-    return await compute<AnitempCodecData, Uint8List>(_codec.encode, data)
-        .then((bytes) => file.writeAsBytes(bytes, flush: true));
+    return await compute<AnitempCodecData, File>((d) {
+      file.writeAsBytesSync(_codec.encode(d));
+
+      return file;
+    }, data);
   }
 
   Future<AnitempCodecData> read(File file) async {
     _extCheck(file);
 
-    return await file.readAsBytes().then(
-        (bytes) => compute<Uint8List, AnitempCodecData>(_codec.decode, bytes));
+    return await compute<File, AnitempCodecData>(
+        (f) => _codec.decode(f.readAsBytesSync()), file);
   }
 }
