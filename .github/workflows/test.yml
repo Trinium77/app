@@ -1,0 +1,45 @@
+name: Flutter unit test
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - lib/**.dart
+      - test/**.dart
+      - .github/workflows/test.yml
+jobs:
+  unittest:
+    name: Unit test
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - macos-latest
+          - ubuntu-latest
+          - macos-12
+          - macos-10.15
+          - windows-2019
+          - ubuntu-22.04
+        flutter-channel:
+          - stable
+          - dev
+          - beta
+        flutter-version:
+          - '3.0.x'
+          - '3.x'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.2
+      - name: Setup Flutter action
+        uses: subosito/flutter-action@v2.4.0
+        with:
+          channel: ${{ matrix.flutter-channel }}
+          flutter-version: ${{ matrix.flutter-version }}
+      - name: Print version
+        run: flutter --version
+      - name: Get dependencies
+        run: flutter pub get
+      - name: Execute test
+        run: flutter test
