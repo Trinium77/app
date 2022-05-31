@@ -10,6 +10,7 @@ import '../../database/sql/typebind/user_setting.dart'
 import '../../model/animal.dart';
 import '../../model/user.dart';
 import '../../model/user_setting.dart';
+import '../reusable/error_dialog.dart';
 import '../reusable/transperant_appbar.dart';
 import '../reusable/user_widget.dart';
 
@@ -92,23 +93,11 @@ abstract class _AbstractedUserPageState<U extends User,
           await onSubmit().then((_) => p.update(value: 1));
         } catch (e) {
           failed = true;
-          showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) => AlertDialog(
-                      title: Text("Error"),
-                      content: Text("Saving user data unsucessfully."),
-                      actions: <TextButton>[
-                        TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text("Close")),
-                        if (kDebugMode)
-                          TextButton(
-                              onPressed: () {
-                                print(e);
-                              },
-                              child: Text("Print to console"))
-                      ]));
+          showErrorDialog(
+              context,
+              e,
+              // TODO: Localize
+              "Saving user data unsuccessfully");
         } finally {
           if (p.isOpen()) {
             p.close();
