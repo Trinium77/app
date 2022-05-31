@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter/material.dart';
+import 'package:sn_progress_dialog/progress_dialog.dart';
 
 import '../../database/sql/typebind/user.dart';
 import '../../database/sql/typebind/user_setting.dart'
@@ -37,71 +38,51 @@ abstract class _AbstractedUserPageState<U extends User,
     _nameController = TextEditingController();
   }
 
+  Future<bool> _confirmDiscard(BuildContext context) async =>
+      await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(
+                    // TODO: Localize
+                    "Discard changes"),
+                content: Text(
+                    // TODO: Localize
+                    "Do you want to leave this page? Current user data will not be applied."),
+                actions: <TextButton>[
+                  TextButton(
+                      onPressed: () => Navigator.pop<bool>(context, true),
+                      child: Text(
+                          // TODO: Localize
+                          "Yes")),
+                  TextButton(
+                      onPressed: () => Navigator.pop<bool>(context, false),
+                      child: Text(
+                          // TODO: Localize
+                          "No"))
+                ],
+              )) ??
+      false;
+
   @override
   Widget build(BuildContext context) => WillPopScope(
       onWillPop: () async {
         if (!_requestSave) {
-          return await showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text(
-                            // TODO: Localize
-                            "Discard changes"),
-                        content: Text(
-                            // TODO: Localize
-                            "Do you want to leave this page? Current user data will not be applied."),
-                        actions: <TextButton>[
-                          TextButton(
-                              onPressed: () =>
-                                  Navigator.pop<bool>(context, true),
-                              child: Text(
-                                  // TODO: Localize
-                                  "Yes")),
-                          TextButton(
-                              onPressed: () =>
-                                  Navigator.pop<bool>(context, false),
-                              child: Text(
-                                  // TODO: Localize
-                                  "No"))
-                        ],
-                      )) ??
-              false;
+          return await _confirmDiscard(context);
         }
 
-        bool loaded = false;
         bool failed = false;
 
-        await showDialog(
-            context: context,
-            builder: (context) => WillPopScope(
-                onWillPop: () async => loaded,
-                child: Dialog(
-                    child: SizedBox(
-                        width: 150,
-                        height: 80,
-                        child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 18, horizontal: 12),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  const CircularProgressIndicator(),
-                                  Padding(
-                                      padding: const EdgeInsetsDirectional.only(
-                                          start: 24),
-                                      child: Text(
-                                          // TODO: Localize
-                                          "Loading..."))
-                                ]))))));
+        final ProgressDialog p = ProgressDialog(context: context);
+        p.show(max: 1, msg: "Save user setting...");
 
         try {
-          await onSubmit();
+          await onSubmit().then((_) => p.update(value: 1));
         } catch (e) {
           failed = true;
         } finally {
-          loaded = true;
-          Navigator.pop(context);
+          if (p.isOpen()) {
+            p.close();
+          }
         }
 
         return !failed;
