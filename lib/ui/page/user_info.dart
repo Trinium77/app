@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart' show compute;
+import 'package:flutter/foundation.dart' show compute, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 
@@ -79,6 +79,23 @@ abstract class _AbstractedUserPageState<U extends User,
           await onSubmit().then((_) => p.update(value: 1));
         } catch (e) {
           failed = true;
+          showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) => AlertDialog(
+                      title: Text("Error"),
+                      content: Text("Saving user data unsucessfully."),
+                      actions: <TextButton>[
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("Close")),
+                        if (kDebugMode)
+                          TextButton(
+                              onPressed: () {
+                                print(e);
+                              },
+                              child: Text("Print to console"))
+                      ]));
         } finally {
           if (p.isOpen()) {
             p.close();
