@@ -17,6 +17,9 @@ class _TemperatureRecordNodeBase {
 
   _TemperatureRecordNodeBase(this.temperature, DateTime recordedAt)
       : this.recordedAt = recordedAt.toUtc();
+
+  @override
+  String toString() => "(${recordedAt.toIso8601String()}) Temp: $temperature";
 }
 
 @immutable

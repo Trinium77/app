@@ -4,7 +4,6 @@ import 'package:sqflite/sqflite.dart';
 
 import '../../../model/animal.dart';
 import '../../../model/record.dart' show TemperatureRecordNodeWithId;
-import '../../../model/temperature.dart' show TemperatureUnitPreference;
 import '../../../model/user.dart';
 import '../../../model/user_setting.dart';
 import '../object.dart' show SQLQueryResult;

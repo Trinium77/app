@@ -1,7 +1,7 @@
-import 'package:anitemp/model/user.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../model/temperature.dart' show TemperatureUnitPreference;
+import '../../../model/user.dart' show UserWithId;
 import '../../../model/user_setting.dart';
 import '../object.dart' show SQLQueryResult;
 import '../open.dart';
