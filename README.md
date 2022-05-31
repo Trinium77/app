@@ -1,5 +1,7 @@
 # Anitemp
 
+[![Flutter unit test](https://github.com/rk0cc/anitemp/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/rk0cc/anitemp/actions/workflows/test.yml)
+
 <p align="center">
   <img src="https://user-images.githubusercontent.com/70585816/169951892-969325df-21d6-4139-9a05-2b9621bc9f27.png" alt="Anitemp logo"/>
 </p>
