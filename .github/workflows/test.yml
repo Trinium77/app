@@ -12,7 +12,6 @@ jobs:
     name: Unit test
     strategy:
       fail-fast: false
-      max-parallel: 9
       matrix:
         os:
           - windows-latest
