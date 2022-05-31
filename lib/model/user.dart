@@ -4,9 +4,10 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 
-import 'animal.dart';
 import '../archive/archivable.dart';
 import '../database/sql/object.dart';
+import '../utils/exif.dart' as exifutil;
+import 'animal.dart';
 
 /// [RegExp] uses for checking image MIME type
 final RegExp _imageRegex = RegExp(r"^image/.+$", dotAll: true);
@@ -25,7 +26,7 @@ class _UserBase extends Archivable with JsonBasedArchivable {
             ? true
             : image.lengthInBytes <= 10 * 1000 * 1000 &&
                 _imageRegex.hasMatch(lookupMimeType('', headerBytes: image)!)),
-        this.image = image == null ? null : UnmodifiableUint8ListView(image);
+        this.image = exifutil.removeGPSData(image);
 
   @override
   Uint8List toBytes() {
