@@ -164,14 +164,14 @@ class AnitempDecoder extends Converter<Uint8List, AnitempCodecData> {
     }
 
     final List<int> metadataJsonByte = input
-        .sublist(input.firstWhere((element) => element == 123),
-            input.firstWhere((element) => element == 125))
+        .sublist(input.indexOf(123), input.indexOf(125) + 1)
         .toList(growable: false);
 
     final Map<String, dynamic> metadataJson =
         jsonDecode(ascii.decode(metadataJsonByte));
 
-    final List<int> dict = metadataJson["context_pos"];
+    final List<int> dict =
+        (metadataJson["context_pos"] as List<dynamic>).cast<int>();
     final int hashLength = metadataJson["hash_length"];
 
     final int ctxStart =

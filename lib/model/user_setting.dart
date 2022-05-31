@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import '../../database/sql/object.dart';
 import '../archive/archivable.dart';
 import 'temperature.dart' show TemperatureUnitPreference;
+
+final ZLibCodec _zlib = ZLibCodec(level: 4, memLevel: 4);
 
 class _UserSettingBase extends Archivable with JsonBasedArchivable {
   final TemperatureUnitPreference unitPreferece;
@@ -15,6 +18,13 @@ class _UserSettingBase extends Archivable with JsonBasedArchivable {
         "unit_preference": unitPreferece.name,
         "tolerance_condition": toleranceCondition
       };
+
+  @override
+  Uint8List toBytes() {
+    List<int> z = _zlib.encode(super.toBytes());
+
+    return z is Uint8List ? z : Uint8List.fromList(z);
+  }
 }
 
 abstract class UserSetting implements _UserSettingBase {
@@ -30,7 +40,8 @@ abstract class UserSetting implements _UserSettingBase {
       toleranceCondition: true);
 
   factory UserSetting.fromBytes(Uint8List bytes) {
-    Map<String, dynamic> decoded = JsonBasedArchivable.jbaDecoder(bytes);
+    Map<String, dynamic> decoded =
+        JsonBasedArchivable.jbaDecoder(_zlib.decode(bytes));
 
     return _UserSetting(
         unitPreferece: TemperatureUnitPreference.values.singleWhere(
