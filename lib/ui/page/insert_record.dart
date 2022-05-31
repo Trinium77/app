@@ -7,6 +7,7 @@ import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../model/temperature.dart' hide Kelvin;
 import '../theme/colour.dart';
+import '../reusable/transperant_appbar.dart';
 
 class InsertRecordPage extends StatefulWidget {
   final TemperatureUnitPreference unitPreference;
@@ -164,14 +165,7 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
             return true;
           },
           child: Scaffold(
-              appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  iconTheme: IconThemeData(
-                      color: MediaQuery.of(context).platformBrightness ==
-                              Brightness.light
-                          ? Colors.black
-                          : null)),
+              appBar: TransperantAppBar.unifyIconTheme(context),
               body: ListView(
                   padding: const EdgeInsets.symmetric(
                       horizontal: _paddingHori, vertical: 4),
