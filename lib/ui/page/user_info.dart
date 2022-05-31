@@ -9,7 +9,6 @@ import '../../database/sql/typebind/user_setting.dart'
 import '../../model/animal.dart';
 import '../../model/user.dart';
 import '../../model/user_setting.dart';
-import '../reusable/load_dialog.dart';
 import '../reusable/transperant_appbar.dart';
 import '../reusable/user_widget.dart';
 
@@ -69,9 +68,43 @@ abstract class _AbstractedUserPageState<U extends User,
               false;
         }
 
-        await LoadDialog.show<void>(context, future: onSubmit());
+        bool loaded = false;
+        bool failed = false;
 
-        return true;
+        await showDialog(
+            context: context,
+            builder: (context) => WillPopScope(
+                onWillPop: () async => loaded,
+                child: Dialog(
+                    child: SizedBox(
+                        width: 150,
+                        height: 80,
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 18, horizontal: 12),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  const CircularProgressIndicator(),
+                                  Padding(
+                                      padding: const EdgeInsetsDirectional.only(
+                                          start: 24),
+                                      child: Text(
+                                          // TODO: Localize
+                                          "Loading..."))
+                                ]))))));
+
+        try {
+          await onSubmit();
+        } catch (e) {
+          failed = true;
+        } finally {
+          loaded = true;
+          Navigator.pop(context);
+        }
+
+        return !failed;
       },
       child: Scaffold());
 }
