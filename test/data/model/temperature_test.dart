@@ -9,8 +9,8 @@ void main() {
           equals("99.3 degree Fahrenheit"));
     });
     test("print to console", () {
-      expect(Celsius(34), equals("34\u{2103}"));
-      expect(Fahrenheit(95.6), equals("95.6\u{2109}"));
+      expect(Celsius(34).toString(), equals("34.0\u{2103}"));
+      expect(Fahrenheit(95.6).toString(), equals("95.6\u{2109}"));
     });
   });
 }
