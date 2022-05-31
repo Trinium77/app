@@ -26,7 +26,7 @@ class _UserBase extends Archivable with JsonBasedArchivable {
             ? true
             : image.lengthInBytes <= 10 * 1000 * 1000 &&
                 _imageRegex.hasMatch(lookupMimeType('', headerBytes: image)!)),
-        this.image = exifutil.removeGPSData(image);
+        this.image = exifutil.removeGPSData(image, unmodifiable: true);
 
   @override
   Uint8List toBytes() {
