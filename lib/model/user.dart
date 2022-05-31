@@ -84,7 +84,7 @@ abstract class User implements _UserBase {
   User updateAnimal(Animal animal);
 
   /// Create a new [User] with applied [image].
-  User updateUint8List(Uint8List? image);
+  User updateImage(Uint8List? image);
 }
 
 class _User extends _UserBase implements User {
@@ -101,7 +101,7 @@ class _User extends _UserBase implements User {
       _User(name: name, animal: this.animal, image: this.image);
 
   @override
-  User updateUint8List(Uint8List? image) =>
+  User updateImage(Uint8List? image) =>
       _User(name: this.name, animal: this.animal, image: image);
 }
 
@@ -125,6 +125,6 @@ class UserWithId extends _UserBase implements User, SQLIdReference {
       UserWithId(this.id, name: name, animal: this.animal, image: this.image);
 
   @override
-  UserWithId updateUint8List(Uint8List? image) =>
+  UserWithId updateImage(Uint8List? image) =>
       UserWithId(this.id, name: this.name, animal: this.animal, image: image);
 }
