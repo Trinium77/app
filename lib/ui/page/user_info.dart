@@ -63,6 +63,19 @@ abstract class _AbstractedUserPageState<U extends User,
               )) ??
       false;
 
+  CircleAvatar _avatar(BuildContext context) {
+    const double rad = 75;
+    return _image == null
+        ? CircleAvatar(
+            radius: rad,
+            backgroundColor: Theme.of(context).primaryColor.withAlpha(0x88),
+            child: const Icon(Icons.person, size: 48))
+        : CircleAvatar(
+            radius: rad,
+            backgroundImage: MemoryImage(_image!),
+          );
+  }
+
   @override
   Widget build(BuildContext context) => WillPopScope(
       onWillPop: () async {
@@ -104,7 +117,18 @@ abstract class _AbstractedUserPageState<U extends User,
 
         return !failed;
       },
-      child: Scaffold());
+      child: SafeArea(
+          child: Scaffold(
+        appBar: TransperantAppBar.unifyIconTheme(context),
+        body: ListView(
+            padding: const EdgeInsets.all(12),
+            shrinkWrap: true,
+            children: <Widget>[
+              GestureDetector(
+                child: _avatar(context),
+              )
+            ]),
+      )));
 }
 
 class NewUserPage extends AbstractedUserPage {
