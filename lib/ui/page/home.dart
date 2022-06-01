@@ -136,7 +136,7 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
             List<Widget> userContainer = <Widget>[
               Padding(
                   padding: const EdgeInsets.only(bottom: 14),
-                  child: AvatarDisplayer(u.image, radius: 35)),
+                  child: AvatarDisplayer(u.image, radius: 45)),
               Text(u.name)
             ];
 

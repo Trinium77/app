@@ -240,7 +240,7 @@ abstract class _AbstractedUserPageState<U extends User,
                   shrinkWrap: true,
                   children: <Widget>[
                     GestureDetector(
-                      child: AvatarDisplayer(_image, radius: 75),
+                      child: AvatarDisplayer(_image, radius: 85),
                       onTap: () => _onChangeImage(context),
                       onLongPress: () => _longPressAvaterAction(context),
                     ),

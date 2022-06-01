@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path/path.dart' as path;
@@ -9,6 +10,7 @@ import 'package:window_size/window_size.dart' as window_size;
 
 import 'database/path.dart';
 import 'database/hive/type_adapters.dart';
+import 'database/sql/open.dart' show enableSQLiteDebugMode;
 import 'ui/app.dart';
 
 void main() async {
@@ -20,6 +22,10 @@ void main() async {
   }
 
   databaseFactory = databaseFactoryFfi;
+
+  if (kDebugMode) {
+    enableSQLiteDebugMode();
+  }
 
   Directory hiveDir = Directory(path.join(await getDatabaseDirPath(), "hive"));
 

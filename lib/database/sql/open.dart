@@ -7,17 +7,17 @@ import '../path.dart';
 
 bool _anitempDBTestMode = false;
 
-set anitempDBTestMode(bool testMode) {
-  openAnitempSqlite().then((db) {
-    if (db.isOpen) {
-      throw StateError("You can't modify test mode when database opened");
-    } else {
-      _anitempDBTestMode = testMode;
-    }
-  });
+/// Activate SQLite as debug purpose.
+///
+/// The location of database files uses `test_db` instead of
+/// [getDatabaseDirPath].
+///
+/// When this method called, it can not be reverted.
+void enableSQLiteDebugMode() {
+  if (!_anitempDBTestMode) {
+    _anitempDBTestMode = true;
+  }
 }
-
-bool get anitempDBTestMode => _anitempDBTestMode;
 
 Future<Database> openAnitempSqlite() async {
   Directory sqliteDir =
@@ -33,8 +33,7 @@ Future<Database> openAnitempSqlite() async {
       version: 1, onConfigure: (db) async {
     await db.execute("PRAGMA foreign_keys = ON");
   }, onCreate: (db, version) async {
-    await db.execute(
-        '''
+    await db.execute('''
 CREATE TABLE anitempuser (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -42,8 +41,7 @@ CREATE TABLE anitempuser (
   image BLOB
 )
 ''');
-    await db.execute(
-        '''
+    await db.execute('''
 CREATE TABLE anitemprecord (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   uid INTEGER NOT NULL,
@@ -53,8 +51,7 @@ CREATE TABLE anitemprecord (
   FOREIGN KEY (uid) REFERENCES anitempuser (id)
 )
 ''');
-    await db.execute(
-        '''
+    await db.execute('''
 CREATE TABLE anitempupref (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   uid INTEGER NOT NULL UNIQUE,
