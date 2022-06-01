@@ -44,6 +44,8 @@ dependencies:
   image: ^3.2.0
   sn_progress_dialog: ^1.0.8
   remove_emoji: ^0.0.7
+  file_picker: ^4.6.0
+  image_picker: ^0.8.5+3
 dev_dependencies:
   flutter_test:
     sdk: flutter

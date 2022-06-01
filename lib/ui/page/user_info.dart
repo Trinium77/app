@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:remove_emoji/remove_emoji.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 
@@ -16,6 +19,70 @@ import '../reusable/error_dialog.dart';
 import '../reusable/action_buttons.dart' show SaveAndDiscardActionButtons;
 import '../reusable/transperant_appbar.dart';
 import '../reusable/user_widget.dart';
+
+abstract class _ImageSelectionProvider {
+  factory _ImageSelectionProvider.gallery() =>
+      Platform.isAndroid || Platform.isIOS
+          ? _MobileImageSelectionProvider(ImageSource.gallery)
+          : _DesktopImageSelectionProvider();
+
+  factory _ImageSelectionProvider.camera() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return _MobileImageSelectionProvider(ImageSource.camera);
+    }
+
+    throw UnsupportedError("No desktop camera implementation");
+  }
+
+  Future<Uint8List?> pickImage();
+}
+
+class _DesktopImageSelectionProvider implements _ImageSelectionProvider {
+  @override
+  Future<Uint8List?> pickImage() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        type: FileType.image,
+        dialogTitle: "Select user image");
+
+    if (result == null) {
+      return null;
+    }
+
+    assert(result.count == 1);
+
+    return result.files.single.bytes;
+  }
+}
+
+class _MobileImageSelectionProvider implements _ImageSelectionProvider {
+  final ImageSource source;
+  final ImagePicker picker;
+
+  _MobileImageSelectionProvider(this.source) : this.picker = ImagePicker();
+
+  @override
+  Future<Uint8List?> pickImage() async {
+    XFile? result = await picker.pickImage(source: source);
+
+    if (result == null) {
+      return null;
+    }
+
+    return result.readAsBytes();
+  }
+}
+
+extension on ImageSource {
+  String displayName(BuildContext context) {
+    switch (this) {
+      case ImageSource.camera:
+        return "Take photo";
+      case ImageSource.gallery:
+        return "Pick from gallery";
+    }
+  }
+}
 
 abstract class AbstractedUserPage extends StatefulWidget {
   const AbstractedUserPage({super.key});
@@ -44,7 +111,37 @@ abstract class _AbstractedUserPageState<U extends User,
     _nameController = TextEditingController();
   }
 
-  void _onChangeImage(BuildContext context) {}
+  void _onChangeImage(BuildContext context) async {
+    _ImageSelectionProvider isp;
+
+    if (Platform.isAndroid || Platform.isIOS) {
+      ImageSource? src = await showDialog<ImageSource>(
+          context: context,
+          builder: (context) => SimpleDialog(
+              title: Text("Get image sources"),
+              children: ImageSource.values
+                  .map((e) => SimpleDialogOption(
+                      onPressed: () => Navigator.pop(context, e),
+                      child: Text(e.displayName(context))))
+                  .toList()));
+
+      if (src == null) {
+        return;
+      }
+
+      isp = _MobileImageSelectionProvider(src);
+    } else {
+      isp = _DesktopImageSelectionProvider();
+    }
+
+    Uint8List? result = await isp.pickImage();
+
+    if (result != null) {
+      setState(() {
+        _image = result;
+      });
+    }
+  }
 
   Future<bool> _confirmDiscard(BuildContext context) async =>
       await showDialog<bool>(
@@ -128,8 +225,8 @@ abstract class _AbstractedUserPageState<U extends User,
                                 _ChangeImageOptions>(
                             context: context,
                             builder: (context) =>
-                                SimpleDialog(children: <TextButton>[
-                                  TextButton(
+                                SimpleDialog(children: <SimpleDialogOption>[
+                                  SimpleDialogOption(
                                       onPressed: () =>
                                           Navigator.pop<_ChangeImageOptions>(
                                               context,
@@ -137,7 +234,7 @@ abstract class _AbstractedUserPageState<U extends User,
                                       child: Text(
                                           // TODO: Localize
                                           "Select new user image")),
-                                  TextButton(
+                                  SimpleDialogOption(
                                       onPressed: () =>
                                           Navigator.pop<_ChangeImageOptions>(
                                               context,
