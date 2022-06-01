@@ -1,5 +1,0 @@
-[licenses]
-unaccepted = ["MS-PL", "MS-RL", "APSL", "AGPL"]
-
-[behavior]
-run_only_on_dependency_modification = true
