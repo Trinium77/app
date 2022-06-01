@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart' show compute, kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:remove_emoji/remove_emoji.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 
 import '../../database/sql/typebind/user.dart';
@@ -10,7 +11,9 @@ import '../../database/sql/typebind/user_setting.dart'
 import '../../model/animal.dart';
 import '../../model/user.dart';
 import '../../model/user_setting.dart';
+import '../reusable/animal_locales.dart';
 import '../reusable/error_dialog.dart';
+import '../reusable/action_buttons.dart' show SaveAndDiscardActionButtons;
 import '../reusable/transperant_appbar.dart';
 import '../reusable/user_widget.dart';
 
@@ -108,16 +111,77 @@ abstract class _AbstractedUserPageState<U extends User,
       },
       child: SafeArea(
           child: Scaffold(
-        appBar: TransperantAppBar.unifyIconTheme(context),
-        body: ListView(
-            padding: const EdgeInsets.all(12),
-            shrinkWrap: true,
-            children: <Widget>[
-              GestureDetector(
-                child: _avatar(context),
-              )
-            ]),
-      )));
+              appBar: TransperantAppBar.unifyIconTheme(context),
+              body: ListView(
+                  padding: const EdgeInsets.all(12),
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    GestureDetector(
+                      child: _avatar(context),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    TextField(
+                        controller: _nameController,
+                        autocorrect: false,
+                        inputFormatters: <TextInputFormatter>[
+                          _NameTextInputFormatter()
+                        ],
+                        maxLines: 1,
+                        maxLength: 80,
+                        decoration: InputDecoration(
+                            labelText:
+                                // TODO: Localize
+                                "Name")),
+                    ListTile(
+                        title: Text(
+                            // TODO: Localize
+                            "Animal"),
+                        trailing: DropdownButton<Animal>(
+                            value: _animal,
+                            items: Animal.values
+                                .map<DropdownMenuItem<Animal>>((e) =>
+                                    DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e.displayName(context))))
+                                .toList(),
+                            onChanged: (newVal) {
+                              if (newVal != null) {
+                                setState(() {
+                                  _animal = newVal;
+                                });
+                              }
+                            })),
+                    const Divider(),
+                    SaveAndDiscardActionButtons(onSave: () {
+                      setState(() {
+                        _requestSave = true;
+                      });
+                      Navigator.pop<bool>(context, true);
+                    }, onDiscard: () {
+                      Navigator.pop<bool>(context, false);
+                    })
+                  ]))));
+}
+
+class _NameTextInputFormatter extends TextInputFormatter {
+  final RemoveEmoji _removeEmoji;
+
+  _NameTextInputFormatter() : this._removeEmoji = RemoveEmoji();
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    String nt = _removeEmoji
+        .removemoji(newValue.text)
+        .replaceAll(RegExp(r"\p{Private_Use}", unicode: true), "");
+
+    return TextEditingValue(
+        text: nt,
+        selection:
+            TextSelection(baseOffset: nt.length, extentOffset: nt.length));
+  }
 }
 
 class NewUserPage extends AbstractedUserPage {

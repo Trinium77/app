@@ -7,6 +7,7 @@ import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../model/temperature.dart' hide Kelvin;
 import '../theme/colour.dart';
+import '../reusable/action_buttons.dart' show SaveAndDiscardActionButtons;
 import '../reusable/transperant_appbar.dart';
 
 class InsertRecordPage extends StatefulWidget {
@@ -134,6 +135,82 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
         ],
       );
 
+  Widget _temperatureInput(BuildContext context) => SizedBox(
+      height: 80,
+      child: FocusScope(
+          child: Focus(
+              onFocusChange: (focus) {
+                setState(() {
+                  _tfTween = focus
+                      ? Tween<double>(begin: 24, end: 63)
+                      : Tween<double>(begin: 63, end: 24);
+                });
+              },
+              child: TweenAnimationBuilder<double>(
+                  curve: Curves.easeInOut,
+                  duration: const Duration(milliseconds: 300),
+                  tween: _tfTween,
+                  builder: (context, fS, _) => TextField(
+                      controller: _controller,
+                      autocorrect: false,
+                      maxLines: 1,
+                      decoration: InputDecoration(suffixText: temperature.unit),
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: <TextInputFormatter>[
+                        _TemperatureValueTextInputFormatter()
+                      ],
+                      style:
+                          TextStyle(fontSize: fS, fontWeight: FontWeight.w500),
+                      onChanged: _onTextFieldChanged)))));
+
+  Widget _headerOpts(BuildContext context, Box box) => LayoutBuilder(
+      builder: (context, constraints) => constraints.maxWidth > 500
+          ? ListTile(
+              leading: _dtfLbl(context),
+              title: _dtf(box, context),
+              trailing: FittedBox(
+                  fit: BoxFit.contain,
+                  child: _switch24h(box, context,
+                      mainAxisAlignment: MainAxisAlignment.center)))
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsetsDirectional.only(end: 12),
+                          child: _dtfLbl(context)),
+                      Expanded(child: _dtf(box, context))
+                    ]),
+                _switch24h(box, context,
+                    mainAxisAlignment: MainAxisAlignment.center)
+              ],
+            ));
+
+  Widget _unitSelector(BuildContext context) => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+                padding: const EdgeInsetsDirectional.only(end: 12),
+                child: Text(
+                    // TODO: Localize
+                    "Temperature unit: ",
+                    style: const TextStyle(fontSize: 16))),
+            SizedBox(
+                height: 36,
+                child: ToggleSwitch(
+                    initialLabelIndex:
+                        _unitLbl.indexWhere((u) => u == temperature.unit),
+                    totalSwitches: _unitLbl.length,
+                    labels: _unitLbl,
+                    onToggle: _onUnitToggle))
+          ]);
+
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<Box>(
       valueListenable: Hive.box("anitemp_pref").listenable(keys: ["24h_mode"]),
@@ -172,138 +249,18 @@ class _InsertRecordPageState extends State<InsertRecordPage> {
                   children: <Widget>[
                     Padding(
                         padding: const EdgeInsets.only(top: 4),
-                        child: LayoutBuilder(
-                            builder: (context, constraints) => constraints
-                                        .maxWidth >
-                                    500
-                                ? ListTile(
-                                    leading: _dtfLbl(context),
-                                    title: _dtf(box, context),
-                                    trailing: FittedBox(
-                                        fit: BoxFit.contain,
-                                        child: _switch24h(box, context,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center)))
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Padding(
-                                                padding:
-                                                    EdgeInsetsDirectional.only(
-                                                        end: 12),
-                                                child: _dtfLbl(context)),
-                                            Expanded(child: _dtf(box, context))
-                                          ]),
-                                      _switch24h(box, context,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center)
-                                    ],
-                                  ))),
+                        child: _headerOpts(context, box)),
                     const Divider(),
                     Text(
                         // TODO: Localize
                         "Body temperature",
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w300)),
-                    SizedBox(
-                        height: 80,
-                        child: FocusScope(
-                            child: Focus(
-                                onFocusChange: (focus) {
-                                  setState(() {
-                                    _tfTween = focus
-                                        ? Tween<double>(begin: 24, end: 63)
-                                        : Tween<double>(begin: 63, end: 24);
-                                  });
-                                },
-                                child: TweenAnimationBuilder<double>(
-                                    curve: Curves.easeInOut,
-                                    duration: const Duration(milliseconds: 300),
-                                    tween: _tfTween,
-                                    builder: (context, fS, _) => TextField(
-                                        controller: _controller,
-                                        autocorrect: false,
-                                        maxLines: 1,
-                                        decoration: InputDecoration(
-                                            suffixText: temperature.unit),
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                decimal: true),
-                                        inputFormatters: <TextInputFormatter>[
-                                          _TemperatureValueTextInputFormatter()
-                                        ],
-                                        style: TextStyle(
-                                            fontSize: fS,
-                                            fontWeight: FontWeight.w500),
-                                        onChanged: _onTextFieldChanged))))),
+                    _temperatureInput(context),
                     const Divider(),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                              padding:
-                                  const EdgeInsetsDirectional.only(end: 12),
-                              child: Text(
-                                  // TODO: Localize
-                                  "Temperature unit: ",
-                                  style: const TextStyle(fontSize: 16))),
-                          SizedBox(
-                              height: 36,
-                              child: ToggleSwitch(
-                                  initialLabelIndex: _unitLbl
-                                      .indexWhere((u) => u == temperature.unit),
-                                  totalSwitches: _unitLbl.length,
-                                  labels: _unitLbl,
-                                  onToggle: _onUnitToggle))
-                        ]),
+                    _unitSelector(context),
                     const Divider(),
-                    LayoutBuilder(
-                        builder: (context, constraints) => Flex(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              direction: constraints.maxWidth >= 720
-                                  ? Axis.horizontal
-                                  : Axis.vertical,
-                              children: <ElevatedButton>[
-                                ElevatedButton(
-                                    onPressed: () {},
-                                    child: Padding(
-                                        padding: _actionBtnPadding,
-                                        child: Text(
-                                            // TODO: Localize
-                                            "Save",
-                                            style: _actionBtnTxtStyle)),
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            AnitempThemeColourHandler(context)
-                                                .mspSuccess)),
-                                ElevatedButton(
-                                    onPressed: () {},
-                                    child: Padding(
-                                        padding: _actionBtnPadding,
-                                        child: Text(
-                                            // TODO: Localize
-                                            "Discard",
-                                            style: _actionBtnTxtStyle)),
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            AnitempThemeColourHandler(context)
-                                                .mspError))
-                              ]
-                                  .map((btn) => Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: btn))
-                                  .toList(),
-                            ))
+                    SaveAndDiscardActionButtons(onSave: () {}, onDiscard: () {})
                   ]))));
 }
 
