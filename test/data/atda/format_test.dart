@@ -28,6 +28,10 @@ Future<void> retainFile(Uint8List bytes, String name) async {
   if (Platform.environment["RETAIN_BINARY"] == "true") {
     File f = File("./dump/$name.bin");
 
+    if (!await f.exists()) {
+      f = await f.create(recursive: true);
+    }
+
     f = await f.writeAsBytes(bytes, flush: true);
   }
 }
