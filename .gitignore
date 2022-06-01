@@ -49,3 +49,4 @@ app.*.map.json
 !.vscode/settings.json
 
 /dump/**
+/test_db/**

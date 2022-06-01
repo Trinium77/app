@@ -5,6 +5,8 @@ import 'package:sqflite/sqflite.dart';
 
 import '../path.dart';
 
+bool anitempDBTestMode = false;
+
 Future<Database> openAnitempSqlite() async {
   Directory sqliteDir =
       Directory(path.join(await getDatabaseDirPath(), "sqlite"));
@@ -13,11 +15,14 @@ Future<Database> openAnitempSqlite() async {
     sqliteDir = await sqliteDir.create(recursive: true);
   }
 
-  return openDatabase(path.join(sqliteDir.path, "anitemp.sqlite3"), version: 1,
-      onConfigure: (db) async {
+  return openDatabase(
+      path.join(
+          anitempDBTestMode ? "./test_db" : sqliteDir.path, "anitemp.sqlite3"),
+      version: 1, onConfigure: (db) async {
     await db.execute("PRAGMA foreign_keys = ON");
   }, onCreate: (db, version) async {
-    await db.execute('''
+    await db.execute(
+        '''
 CREATE TABLE anitempuser (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -25,7 +30,8 @@ CREATE TABLE anitempuser (
   image BLOB
 )
 ''');
-    await db.execute('''
+    await db.execute(
+        '''
 CREATE TABLE anitemprecord (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   uid INTEGER NOT NULL,
@@ -35,7 +41,8 @@ CREATE TABLE anitemprecord (
   FOREIGN KEY (uid) REFERENCES anitempuser (id)
 )
 ''');
-    await db.execute('''
+    await db.execute(
+        '''
 CREATE TABLE anitempupref (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   uid INTEGER NOT NULL UNIQUE,
