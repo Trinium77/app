@@ -9,8 +9,10 @@ import '../archive/archivable.dart';
 import '../database/sql/object.dart';
 import '../model/temperature.dart';
 
+/// Standarise CSV format [Codec].
 final CsvCodec _csvCodec = CsvCodec(eol: "\n", shouldParseNumbers: false);
 
+/// Base object of [TemperatureRecordNode].
 class _TemperatureRecordNodeBase {
   final CommonTemperature temperature;
   final DateTime recordedAt;
@@ -22,21 +24,29 @@ class _TemperatureRecordNodeBase {
   String toString() => "(${recordedAt.toIso8601String()}) Temp: $temperature";
 }
 
+/// An object contains recorded [Temperature] in specified [DateTime]
 @immutable
 @sealed
 abstract class TemperatureRecordNode implements _TemperatureRecordNodeBase {
+  /// A [temperature] when this node created.
+  ///
+  /// Note: Only accept [CommonTemperature] only.
   @override
   CommonTemperature get temperature;
 
+  /// When this node created.
   @override
   DateTime get recordedAt;
 
+  /// Construct a new [TemperatureRecordNode].
   factory TemperatureRecordNode(
       {required CommonTemperature temperature,
       required DateTime recordedAt}) = _TemperatureRecordNode;
 
+  /// Update [temperature] of this node data.
   TemperatureRecordNode updateTemperature(CommonTemperature temperature);
 
+  /// Update when it recorded.
   TemperatureRecordNode updateRecordedAt(DateTime recordedAt);
 }
 
@@ -57,11 +67,13 @@ class _TemperatureRecordNode extends _TemperatureRecordNodeBase
           temperature: temperature, recordedAt: this.recordedAt);
 }
 
+/// A [TemperatureRecordNode] from database.
 class TemperatureRecordNodeWithId extends _TemperatureRecordNodeBase
     implements TemperatureRecordNode, SQLIdReference {
   @override
   final int id;
 
+  /// Construct [TemperatureRecordNodeWithId].
   TemperatureRecordNodeWithId(this.id,
       {required CommonTemperature temperature, required DateTime recordedAt})
       : super(temperature, recordedAt);
@@ -78,8 +90,12 @@ class TemperatureRecordNodeWithId extends _TemperatureRecordNodeBase
           temperature: temperature, recordedAt: this.recordedAt);
 }
 
+/// Add advance feature in [Iterable] of [TemperatureRecordNode].
 extension TemperatureRecordNodeIterableExtension<
     N extends TemperatureRecordNode> on Iterable<N> {
+  /// Find a range of [DateTime] when [TemperatureRecordNode] recorded.
+  ///
+  /// [from] and [to] can not be [Null] at the same time.
   Iterable<N> whereRecordedAt({DateTime? from, DateTime? to}) {
     DateTime? utcf = from?.toUtc(), utct = to?.toUtc();
 
@@ -96,6 +112,8 @@ extension TemperatureRecordNodeIterableExtension<
         !(utct?.isAfter(nodes.recordedAt) ?? false));
   }
 
+  /// Convert [Iterable] of [TemperatureRecordNode] to 2D [List] of [String]
+  /// to repersent CSV in Dart object.
   List<List<String>> toCsv() {
     List<List<String>> csv = <List<String>>[
       List.unmodifiable(<String>["recordedAt", "temp", "unit"])
@@ -112,9 +130,13 @@ extension TemperatureRecordNodeIterableExtension<
     return UnmodifiableListView(csv);
   }
 
+  /// Parse this [Iterable] to **unmodifiable**
+  /// [ArchivableTemperatureRecordNodeIterable] for handing [Archivable]
+  /// features.
   ArchivableTemperatureRecordNodeIterable toArchivable() =>
       ArchivableTemperatureRecordNodeIterable(this, growable: false);
 
+  /// Parse [csv] to a [List] of [TemperatureRecordNode].
   static List<TemperatureRecordNode> parseFromCsv(List<List<String>> csv) {
     List<TemperatureRecordNode> parsed = <TemperatureRecordNode>[];
 
@@ -129,6 +151,7 @@ extension TemperatureRecordNodeIterableExtension<
   }
 }
 
+/// [List] exclusive feature of [TemperatureRecordNode].
 extension TemperatureRecordNodeListExtension<N extends TemperatureRecordNode>
     on List<N> {
   int _sortInternal<C extends Comparable>(bool reverse, C a, C b) {
@@ -141,22 +164,34 @@ extension TemperatureRecordNodeListExtension<N extends TemperatureRecordNode>
     return c;
   }
 
+  /// Sort this list by [TemperatureRecordNode.temperature].
+  ///
+  /// By default, the order is descended. If want to sort as ascending order,
+  /// apply [ascend] to `true`.
   void sortByTemperature({bool ascend = false}) => sort((a, b) =>
       _sortInternal<Temperature>(ascend, a.temperature, b.temperature));
 
+  /// Sort this list by [TemperatureRecordNode.recordedAt].
+  ///
+  /// By default, newer [DateTime] will be sorted first. If sort by the oldest,
+  /// please apply [oldToNew] to `true`.
   void sortByRecordedAt({bool oldToNew = false}) => sort(
       (a, b) => _sortInternal<DateTime>(oldToNew, a.recordedAt, b.recordedAt));
 }
 
+/// [Iterable] of [TemperatureRecordNode] with [Archivable] feature to export
+/// [Uint8List].
 class ArchivableTemperatureRecordNodeIterable extends Archivable
     with IterableMixin<TemperatureRecordNode> {
   final Iterable<TemperatureRecordNode> _source;
 
+  /// Construct [ArchivableTemperatureRecordNodeIterable] with existed [source].
   ArchivableTemperatureRecordNodeIterable(
       Iterable<TemperatureRecordNode> source,
       {bool growable = true})
       : this._source = List.from(source, growable: growable);
 
+  /// Parse [ArchivableTemperatureRecordNodeIterable] from [bytes].
   factory ArchivableTemperatureRecordNodeIterable.fromBytes(Uint8List bytes) {
     List<List<String>> csv =
         _csvCodec.decoder.convert<String>(utf8.decode(bytes));

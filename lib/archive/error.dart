@@ -17,7 +17,7 @@ String _getErrorLogContext(Object error) {
 }
 
 void saveErrorLog(Object error, DateTime thrownAt) async {
-  String thrownDTStr = DateFormat("y_M_d-H_m_s").format(thrownAt);
+  String thrownDTStr = DateFormat("yyyyMMddHHmmss").format(thrownAt);
 
   File log = await path_provider.getApplicationDocumentsDirectory().then(
       (docDir) =>

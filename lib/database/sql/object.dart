@@ -19,8 +19,8 @@ extension JsonSQLiteAdapter on JsonBasedArchivable {
   ///
   /// Other types will be rely to [Object.toString].
   ///
-  /// [Null] only accepted during updating database. Therefore [retainNullValue]
-  /// will remains all null value in [jsonData] and apply.
+  /// [Null] only accepted during updating database. Therefore,
+  /// [retainNullValue] will remains all null value in [jsonData] and apply.
   Map<String, dynamic> jsonDataInSQLite({bool retainNullValue = false}) {
     List<MapEntry<String, dynamic>> casted = [];
 

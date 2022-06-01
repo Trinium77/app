@@ -8,7 +8,9 @@ import '../../../model/user.dart';
 import '../../../model/user_setting.dart';
 import '../object.dart' show SQLQueryResult, JsonSQLiteAdapter;
 import '../open.dart';
+import 'user_setting.dart' show UserSettingWithIdSQLExtension;
 
+/// Extension for interacting SQL and [User].
 extension UserSQLiteExtension on User {
   /// Insert new [User] or clone [UserWithId] to the database.
   Future<void> insertUserToDb({bool keepOpen = false}) async {
@@ -25,7 +27,9 @@ extension UserSQLiteExtension on User {
   }
 }
 
+/// Handle data update of [UserWithId].
 extension UserWithIdSQLiteExtension on UserWithId {
+  /// Update user's information of current [id].
   Future<void> updateUserIdData({bool keepOpen = false}) async {
     Database db = await openAnitempSqlite();
 
@@ -41,7 +45,7 @@ extension UserWithIdSQLiteExtension on UserWithId {
     }
   }
 
-  /// Delete **all [UserWithId] and related record (including but not limited to
+  /// Delete **all [UserWithId] and related record (including
   /// [TemperatureRecordNodeWithId] and [UserSettingWithId])** from database.
   ///
   /// This action **can not be reverted** when executed. And this [UserWithId]
@@ -63,8 +67,18 @@ extension UserWithIdSQLiteExtension on UserWithId {
     }
   }
 
-  Future<UserSettingWithId> getUserSetting() async {
-    throw UnimplementedError();
+  Future<UserSettingWithId> getUserSetting({bool keepOpen = false}) async {
+    Database db = await openAnitempSqlite();
+
+    try {
+      return UserSettingWithIdSQLExtension.mapFromSQL(await db
+              .query("anitempupref", where: "uid = ?", whereArgs: <Object>[id]))
+          .single;
+    } finally {
+      if (!keepOpen) {
+        await db.close();
+      }
+    }
   }
 
   static List<UserWithId> mapFromSQL(SQLQueryResult sqlData) => sqlData
