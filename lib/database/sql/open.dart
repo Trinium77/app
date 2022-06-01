@@ -5,7 +5,19 @@ import 'package:sqflite/sqflite.dart';
 
 import '../path.dart';
 
-bool anitempDBTestMode = false;
+bool _anitempDBTestMode = false;
+
+set anitempDBTestMode(bool testMode) {
+  openAnitempSqlite().then((db) {
+    if (db.isOpen) {
+      throw StateError("You can't modify test mode when database opened");
+    } else {
+      _anitempDBTestMode = testMode;
+    }
+  });
+}
+
+bool get anitempDBTestMode => _anitempDBTestMode;
 
 Future<Database> openAnitempSqlite() async {
   Directory sqliteDir =
@@ -17,7 +29,7 @@ Future<Database> openAnitempSqlite() async {
 
   return openDatabase(
       path.join(
-          anitempDBTestMode ? "./test_db" : sqliteDir.path, "anitemp.sqlite3"),
+          _anitempDBTestMode ? "./test_db" : sqliteDir.path, "anitemp.sqlite3"),
       version: 1, onConfigure: (db) async {
     await db.execute("PRAGMA foreign_keys = ON");
   }, onCreate: (db, version) async {
