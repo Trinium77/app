@@ -181,35 +181,69 @@ abstract class _AbstractedUserPageState<U extends User,
           );
   }
 
+  void _longPressAvaterAction(BuildContext context) async {
+    _ChangeImageOptions? opts = await showDialog<_ChangeImageOptions>(
+        context: context,
+        builder: (context) => SimpleDialog(children: <SimpleDialogOption>[
+              SimpleDialogOption(
+                  onPressed: () => Navigator.pop<_ChangeImageOptions>(
+                      context, _ChangeImageOptions.select),
+                  child: Text(
+                      // TODO: Localize
+                      "Select new user image")),
+              SimpleDialogOption(
+                  onPressed: () => Navigator.pop<_ChangeImageOptions>(
+                      context, _ChangeImageOptions.remove),
+                  child: Text(
+                      // TODO: Localize
+                      "Reset user image to default"))
+            ]));
+
+    if (opts != null) {
+      switch (opts) {
+        case _ChangeImageOptions.select:
+          _onChangeImage(context);
+          break;
+        case _ChangeImageOptions.remove:
+          setState(() {
+            _image = null;
+          });
+          break;
+      }
+    }
+  }
+
+  Future<bool> _popProcess(BuildContext context) async {
+    if (!_requestSave) {
+      return await _confirmDiscard(context);
+    }
+
+    bool failed = false;
+
+    final ProgressDialog p = ProgressDialog(context: context);
+    p.show(max: 1, msg: "Save user setting...");
+
+    try {
+      await onSubmit().then((_) => p.update(value: 1));
+    } catch (e) {
+      failed = true;
+      showErrorDialog(
+          context,
+          e,
+          // TODO: Localize
+          "Saving user data unsuccessfully");
+    } finally {
+      if (p.isOpen()) {
+        p.close();
+      }
+    }
+
+    return !failed;
+  }
+
   @override
   Widget build(BuildContext context) => WillPopScope(
-      onWillPop: () async {
-        if (!_requestSave) {
-          return await _confirmDiscard(context);
-        }
-
-        bool failed = false;
-
-        final ProgressDialog p = ProgressDialog(context: context);
-        p.show(max: 1, msg: "Save user setting...");
-
-        try {
-          await onSubmit().then((_) => p.update(value: 1));
-        } catch (e) {
-          failed = true;
-          showErrorDialog(
-              context,
-              e,
-              // TODO: Localize
-              "Saving user data unsuccessfully");
-        } finally {
-          if (p.isOpen()) {
-            p.close();
-          }
-        }
-
-        return !failed;
-      },
+      onWillPop: () => _popProcess(context),
       child: SafeArea(
           child: Scaffold(
               appBar: TransperantAppBar.unifyIconTheme(context),
@@ -220,43 +254,7 @@ abstract class _AbstractedUserPageState<U extends User,
                     GestureDetector(
                       child: _avatar(context),
                       onTap: () => _onChangeImage(context),
-                      onLongPress: () async {
-                        _ChangeImageOptions? opts = await showDialog<
-                                _ChangeImageOptions>(
-                            context: context,
-                            builder: (context) =>
-                                SimpleDialog(children: <SimpleDialogOption>[
-                                  SimpleDialogOption(
-                                      onPressed: () =>
-                                          Navigator.pop<_ChangeImageOptions>(
-                                              context,
-                                              _ChangeImageOptions.select),
-                                      child: Text(
-                                          // TODO: Localize
-                                          "Select new user image")),
-                                  SimpleDialogOption(
-                                      onPressed: () =>
-                                          Navigator.pop<_ChangeImageOptions>(
-                                              context,
-                                              _ChangeImageOptions.remove),
-                                      child: Text(
-                                          // TODO: Localize
-                                          "Reset user image to default"))
-                                ]));
-
-                        if (opts != null) {
-                          switch (opts) {
-                            case _ChangeImageOptions.select:
-                              _onChangeImage(context);
-                              break;
-                            case _ChangeImageOptions.remove:
-                              setState(() {
-                                _image = null;
-                              });
-                              break;
-                          }
-                        }
-                      },
+                      onLongPress: () => _longPressAvaterAction(context),
                     ),
                     const SizedBox(height: 12),
                     const Divider(),
