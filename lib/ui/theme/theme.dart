@@ -38,9 +38,38 @@ class AnitempThemeDataGetter {
     }
   }
 
+  TextTheme get _unifiedTextTheme {
+    String pfontName = _fontName;
+    final List<String> fallbackFont = <String>["Arial", "Helvetica"];
+
+    if (pfontName.contains("Noto Sans")) {
+      fallbackFont.insert(0, "Roboto");
+    }
+
+    final TextStyle unifiedTextStyle =
+        TextStyle(fontFamily: pfontName, fontFamilyFallback: fallbackFont);
+
+    return TextTheme(
+        bodyLarge: unifiedTextStyle,
+        bodyMedium: unifiedTextStyle,
+        bodySmall: unifiedTextStyle,
+        displayLarge: unifiedTextStyle,
+        displayMedium: unifiedTextStyle,
+        displaySmall: unifiedTextStyle,
+        headlineLarge: unifiedTextStyle,
+        headlineMedium: unifiedTextStyle,
+        headlineSmall: unifiedTextStyle,
+        labelLarge: unifiedTextStyle,
+        labelMedium: unifiedTextStyle,
+        labelSmall: unifiedTextStyle,
+        titleLarge: unifiedTextStyle,
+        titleMedium: unifiedTextStyle,
+        titleSmall: unifiedTextStyle);
+  }
+
   ThemeData get light =>
-      ThemeData(brightness: Brightness.light, fontFamily: _fontName);
+      ThemeData(brightness: Brightness.light, textTheme: _unifiedTextTheme);
 
   ThemeData get dark =>
-      ThemeData(brightness: Brightness.dark, fontFamily: _fontName);
+      ThemeData(brightness: Brightness.dark, textTheme: _unifiedTextTheme);
 }
