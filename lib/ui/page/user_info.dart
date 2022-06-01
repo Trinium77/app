@@ -24,6 +24,8 @@ abstract class AbstractedUserPage extends StatefulWidget {
   State<AbstractedUserPage> createState();
 }
 
+enum _ChangeImageOptions { select, remove }
+
 abstract class _AbstractedUserPageState<U extends User,
     A extends AbstractedUserPage> extends State<A> {
   late final TextEditingController _nameController;
@@ -41,6 +43,8 @@ abstract class _AbstractedUserPageState<U extends User,
     super.initState();
     _nameController = TextEditingController();
   }
+
+  void _onChangeImage(BuildContext context) {}
 
   Future<bool> _confirmDiscard(BuildContext context) async =>
       await showDialog<bool>(
@@ -73,7 +77,7 @@ abstract class _AbstractedUserPageState<U extends User,
         ? CircleAvatar(
             radius: rad,
             backgroundColor: Theme.of(context).primaryColor.withAlpha(0x88),
-            child: const Icon(Icons.person, size: 48))
+            child: const FittedBox(child: Icon(Icons.person)))
         : CircleAvatar(
             radius: rad,
             backgroundImage: MemoryImage(_image!),
@@ -118,6 +122,44 @@ abstract class _AbstractedUserPageState<U extends User,
                   children: <Widget>[
                     GestureDetector(
                       child: _avatar(context),
+                      onTap: () => _onChangeImage(context),
+                      onLongPress: () async {
+                        _ChangeImageOptions? opts = await showDialog<
+                                _ChangeImageOptions>(
+                            context: context,
+                            builder: (context) =>
+                                SimpleDialog(children: <TextButton>[
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop<_ChangeImageOptions>(
+                                              context,
+                                              _ChangeImageOptions.select),
+                                      child: Text(
+                                          // TODO: Localize
+                                          "Select new user image")),
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop<_ChangeImageOptions>(
+                                              context,
+                                              _ChangeImageOptions.remove),
+                                      child: Text(
+                                          // TODO: Localize
+                                          "Reset user image to default"))
+                                ]));
+
+                        if (opts != null) {
+                          switch (opts) {
+                            case _ChangeImageOptions.select:
+                              _onChangeImage(context);
+                              break;
+                            case _ChangeImageOptions.remove:
+                              setState(() {
+                                _image = null;
+                              });
+                              break;
+                          }
+                        }
+                      },
                     ),
                     const SizedBox(height: 12),
                     const Divider(),
