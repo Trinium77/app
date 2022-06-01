@@ -12,6 +12,7 @@ jobs:
   unittest:
     env:
       TEST_ATDA: "1"
+      RETAIN_BINARY: "true"
     name: Unit test
     strategy:
       fail-fast: false
@@ -44,3 +45,10 @@ jobs:
         run: flutter pub get
       - name: Execute test
         run: flutter test test/data/atda/
+      - name: Upload generated binaries
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: atad_dump
+          path: dump/*.bin
+          retention-days: 7
+
