@@ -39,7 +39,7 @@ dependencies:
   toggle_switch: ^2.0.1
   date_field: ^3.0.1
   intl: ^0.17.0
-  flutter_native_splash: ^2.2.1
+  flutter_native_splash: ^2.2.2
   crop_image: ^1.0.2
   image: ^3.2.0
   sn_progress_dialog: ^1.0.8
