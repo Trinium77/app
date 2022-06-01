@@ -159,7 +159,8 @@ class _AnitempUserSettingPageState
           leading: DropdownButton<TemperatureUnitPreference>(
               items: TemperatureUnitPreference.values
                   .map<DropdownMenuItem<TemperatureUnitPreference>>((e) =>
-                      DropdownMenuItem(child: Text(e.displayName(context))))
+                      DropdownMenuItem(
+                          value: e, child: Text(e.displayName(context))))
                   .toList(),
               onChanged: (newVal) {
                 if (newVal != null) {
