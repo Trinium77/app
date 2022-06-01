@@ -48,7 +48,7 @@ jobs:
       - name: Upload generated binaries
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: atad_dump
+          name: atad-dump-${{ matrix.os }}-${{ matrix.flutter-channel }}
           path: dump/*.bin
           retention-days: 7
 
