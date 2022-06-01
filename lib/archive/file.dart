@@ -8,6 +8,8 @@ import 'codec.dart';
 /// Constant of [AnitempFileHandler] with [CompressedAnitempCodec] by default.
 const AnitempFileHandler anitempFileHandler = AnitempFileHandler();
 
+/// Extended from [FileSystemException] that the [File] is not a valid Anitemp
+/// format.
 @sealed
 class NotAnitempFileException extends FileSystemException
     implements NotAnitempFormatException {
