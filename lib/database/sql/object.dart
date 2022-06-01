@@ -18,11 +18,14 @@ extension JsonSQLiteAdapter on JsonBasedArchivable {
   /// * [DateTime] will uses [DateTime.toIso8601String].
   ///
   /// Other types will be rely to [Object.toString].
-  Map<String, dynamic> get jsonDataInSQLite {
+  ///
+  /// [Null] only accepted during updating database. Therefore [retainNullValue]
+  /// will remains all null value in [jsonData] and apply.
+  Map<String, dynamic> jsonDataInSQLite({bool retainNullValue = false}) {
     List<MapEntry<String, dynamic>> casted = [];
 
     for (MapEntry<String, dynamic> e in jsonData.entries) {
-      if (e.value != null) {
+      if (e.value != null || retainNullValue) {
         switch (e.value.runtimeType) {
           case bool:
             casted.add(MapEntry(e.key, e.value ? 1 : 0));
@@ -35,6 +38,7 @@ extension JsonSQLiteAdapter on JsonBasedArchivable {
           case int:
           case Uint8List:
           case String:
+          case Null:
             casted.add(e);
             break;
           default:

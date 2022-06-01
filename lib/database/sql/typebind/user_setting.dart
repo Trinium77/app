@@ -19,7 +19,7 @@ extension UserSettingSQLExtension on UserSetting {
               .then((r) => r.single["id"] as int);
 
       await db.insert("anitempupref",
-          <String, Object?>{"uid": uid}..addAll(jsonDataInSQLite),
+          <String, Object?>{"uid": uid}..addAll(jsonDataInSQLite()),
           conflictAlgorithm: ConflictAlgorithm.rollback);
     } finally {
       if (!keepOpen) {
@@ -34,7 +34,7 @@ extension UserSettingWithIdSQLExtension on UserSettingWithId {
     Database db = await openAnitempSqlite();
 
     try {
-      await db.update("anitempupref", jsonDataInSQLite,
+      await db.update("anitempupref", jsonDataInSQLite(retainNullValue: true),
           where: "id = ?",
           whereArgs: <Object>[id],
           conflictAlgorithm: ConflictAlgorithm.rollback);

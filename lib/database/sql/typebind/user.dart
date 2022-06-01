@@ -15,7 +15,7 @@ extension UserSQLiteExtension on User {
     Database db = await openAnitempSqlite();
 
     try {
-      await db.insert("anitempuser", jsonDataInSQLite,
+      await db.insert("anitempuser", jsonDataInSQLite(),
           conflictAlgorithm: ConflictAlgorithm.rollback);
     } finally {
       if (!keepOpen) {
@@ -30,7 +30,7 @@ extension UserWithIdSQLiteExtension on UserWithId {
     Database db = await openAnitempSqlite();
 
     try {
-      await db.update("anitempuser", jsonData,
+      await db.update("anitempuser", jsonDataInSQLite(retainNullValue: true),
           where: "id = ?",
           whereArgs: <Object>[id],
           conflictAlgorithm: ConflictAlgorithm.rollback);
