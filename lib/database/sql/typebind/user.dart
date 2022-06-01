@@ -6,7 +6,7 @@ import '../../../model/animal.dart';
 import '../../../model/record.dart' show TemperatureRecordNodeWithId;
 import '../../../model/user.dart';
 import '../../../model/user_setting.dart';
-import '../object.dart' show SQLQueryResult;
+import '../object.dart' show SQLQueryResult, JsonSQLiteAdapter;
 import '../open.dart';
 
 extension UserSQLiteExtension on User {
@@ -15,7 +15,8 @@ extension UserSQLiteExtension on User {
     Database db = await openAnitempSqlite();
 
     try {
-      await db.insert("anitempuser", jsonData);
+      await db.insert("anitempuser", jsonDataInSQLite,
+          conflictAlgorithm: ConflictAlgorithm.rollback);
     } finally {
       if (!keepOpen) {
         await db.close();
@@ -30,7 +31,9 @@ extension UserWithIdSQLiteExtension on UserWithId {
 
     try {
       await db.update("anitempuser", jsonData,
-          where: "id = ?", whereArgs: <Object>[id]);
+          where: "id = ?",
+          whereArgs: <Object>[id],
+          conflictAlgorithm: ConflictAlgorithm.rollback);
     } finally {
       if (!keepOpen) {
         await db.close();
@@ -52,7 +55,7 @@ extension UserWithIdSQLiteExtension on UserWithId {
       ..delete("anitempuser", where: "id = ?", whereArgs: <Object>[id]);
 
     try {
-      await batch.commit(noResult: true);
+      await batch.commit(noResult: true, continueOnError: false);
     } finally {
       if (!keepOpen) {
         await db.close();

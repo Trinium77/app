@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../archive/error.dart' as errlog;
 
-void showErrorDialog(
+Future<void> showErrorDialog(
     BuildContext context, Object error, String contextMessage) async {
   DateTime errTime = DateTime.now();
 

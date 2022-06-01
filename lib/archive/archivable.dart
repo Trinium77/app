@@ -10,7 +10,6 @@ abstract class Archivable {
 }
 
 mixin JsonBasedArchivable on Archivable {
-  @protected
   Map<String, dynamic> get jsonData;
 
   @mustCallSuper

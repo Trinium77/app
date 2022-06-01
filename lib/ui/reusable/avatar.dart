@@ -20,6 +20,6 @@ class AvatarDisplayer extends StatelessWidget {
       backgroundColor: _image == null
           ? Theme.of(context).primaryColor.withAlpha(0x88)
           : null,
-      child: _image == null ? const FittedBox(child: Icon(Icons.person)) : null,
+      child: _image == null ? const Icon(Icons.person, size: 48) : null,
       backgroundImage: _image == null ? null : MemoryImage(_image!));
 }

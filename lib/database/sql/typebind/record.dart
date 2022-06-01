@@ -35,7 +35,8 @@ extension TemperatureRecordNodeSQLExtension on TemperatureRecordNode {
     Database db = await openAnitempSqlite();
 
     try {
-      await db.insert("anitemprecord", {"uid": user.id}..addAll(_jsonData));
+      await db.insert("anitemprecord", {"uid": user.id}..addAll(_jsonData),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
     } finally {
       if (!keepOpen) {
         await db.close();
@@ -51,7 +52,9 @@ extension TemperatureRecordNodeWithIdSQLExtension
 
     try {
       await db.update("anitemprecord", _jsonData,
-          where: "id = ?", whereArgs: <Object>[id]);
+          where: "id = ?",
+          whereArgs: <Object>[id],
+          conflictAlgorithm: ConflictAlgorithm.rollback);
     } finally {
       if (!keepOpen) {
         await db.close();

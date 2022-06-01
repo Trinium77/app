@@ -204,29 +204,11 @@ abstract class _AbstractedUserPageState<U extends User,
   Future<bool> _popProcess(BuildContext context) async {
     if (!_requestSave) {
       return await _confirmDiscard(context);
+
+      //final ProgressDialog p = ProgressDialog(context: context);
     }
 
-    bool failed = false;
-
-    final ProgressDialog p = ProgressDialog(context: context);
-    p.show(max: 1, msg: "Save user setting...");
-
-    try {
-      await onSubmit().then((_) => p.update(value: 1));
-    } catch (e) {
-      failed = true;
-      showErrorDialog(
-          context,
-          e,
-          // TODO: Localize
-          "Saving user data unsuccessfully");
-    } finally {
-      if (p.isOpen()) {
-        p.close();
-      }
-    }
-
-    return !failed;
+    return true;
   }
 
   @override
@@ -279,11 +261,25 @@ abstract class _AbstractedUserPageState<U extends User,
                               }
                             })),
                     const Divider(),
-                    SaveAndDiscardActionButtons(onSave: () {
+                    SaveAndDiscardActionButtons(onSave: () async {
                       setState(() {
                         _requestSave = true;
                       });
-                      Navigator.pop<bool>(context, true);
+                      try {
+                        print("Adding");
+                        await onSubmit();
+                        Navigator.pop<bool>(context, true);
+                      } catch (e) {
+                        print("Has err");
+                        await showErrorDialog(
+                            context,
+                            e,
+                            // TODO: Localize
+                            "Saving user data unsuccessfully");
+                        setState(() {
+                          _requestSave = false;
+                        });
+                      }
                     }, onDiscard: () {
                       Navigator.pop<bool>(context, false);
                     })

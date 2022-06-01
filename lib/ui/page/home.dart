@@ -1,4 +1,4 @@
-import 'package:anitemp/ui/reusable/error_dialog.dart';
+import 'package:anitemp/model/animal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,9 +10,10 @@ import '../../database/sql/open.dart';
 import '../../database/sql/typebind/user.dart';
 import '../../model/temperature.dart';
 import '../../model/user.dart';
-import '../page/insert_record.dart';
+import '../page/user_info.dart';
 import '../reusable/avatar.dart';
 import '../reusable/close_confirm.dart';
+import '../reusable/error_dialog.dart';
 import 'setting.dart' show AnitempSettingPage;
 
 const String _actualVersion = "0.0.0-alpha+1";
@@ -90,6 +91,23 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
                       "Import user..."),
                   onTap: () => Navigator.pop(context, _AddUserAction.import))
             ]));
+
+    if (action == null) {
+      return;
+    }
+
+    switch (action) {
+      case _AddUserAction.create:
+        if (await Navigator.push<bool>(context,
+                MaterialPageRoute(builder: (context) => NewUserPage())) ??
+            false) {
+          setState(() {});
+        }
+        break;
+      case _AddUserAction.import:
+        // TODO: Handle this case.
+        break;
+    }
   }
 
   Future<List<UserWithId>> get _currentUserInfo async {
@@ -109,25 +127,30 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const SizedBox.square(
-              dimension: 125,
-              child: FittedBox(child: Icon(FontAwesomeIcons.userPen)))
+          const Padding(
+              padding: EdgeInsets.only(bottom: 36),
+              child: SizedBox.square(
+                  dimension: 125,
+                  child: FittedBox(child: Icon(FontAwesomeIcons.userPen)))),
+          Text("Press '+' button to create user.",
+              style: const TextStyle(fontSize: 24))
         ],
       );
     }
 
     return LayoutBuilder(builder: (context, constraint) {
-      int ipc = 1;
+      int ipc = 2;
 
-      if (constraint.maxWidth > 500) {
-        ipc = 2;
-      } else if (constraint.maxWidth > 700) {
-        ipc = 3;
-      } else if (constraint.maxWidth > 900) {
+      if (constraint.maxWidth > 940) {
+        ipc = 5;
+      } else if (constraint.maxWidth > 768) {
         ipc = 4;
+      } else if (constraint.maxWidth > 576) {
+        ipc = 3;
       }
 
       return GridView.builder(
+          shrinkWrap: true,
           itemCount: uwid.length,
           gridDelegate:
               SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: ipc),
@@ -136,12 +159,14 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
             List<Widget> userContainer = <Widget>[
               Padding(
                   padding: const EdgeInsets.only(bottom: 14),
-                  child: AvatarDisplayer(u.image, radius: 45)),
-              Text(u.name)
+                  child: AvatarDisplayer(u.image, radius: 50)),
+              Text(u.name,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w500))
             ];
 
             return SizedBox.square(
-                dimension: 200,
+                dimension: 75,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,

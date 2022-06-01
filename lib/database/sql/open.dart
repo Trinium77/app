@@ -27,10 +27,10 @@ Future<Database> openAnitempSqlite() async {
     sqliteDir = await sqliteDir.create(recursive: true);
   }
 
-  return openDatabase(
-      path.join(
-          _anitempDBTestMode ? "./test_db" : sqliteDir.path, "anitemp.sqlite3"),
-      version: 1, onConfigure: (db) async {
+  String dbPath = path.join(
+      _anitempDBTestMode ? "test_db" : sqliteDir.path, "anitemp.sqlite3");
+
+  return openDatabase(dbPath, version: 1, onConfigure: (db) async {
     await db.execute("PRAGMA foreign_keys = ON");
   }, onCreate: (db, version) async {
     await db.execute('''
