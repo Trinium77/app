@@ -291,16 +291,11 @@ abstract class _AbstractedUserPageState<U extends User,
 }
 
 class _NameTextInputFormatter extends TextInputFormatter {
-  final RemoveEmoji _removeEmoji;
-
-  _NameTextInputFormatter() : this._removeEmoji = RemoveEmoji();
-
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    String nt = _removeEmoji
-        .removemoji(newValue.text)
-        .replaceAll(RegExp(r"\p{Private_Use}", unicode: true), "");
+    String nt =
+        newValue.text.replaceAll(RegExp(r"\p{Other}", unicode: true), "");
 
     return TextEditingValue(
         text: nt,
