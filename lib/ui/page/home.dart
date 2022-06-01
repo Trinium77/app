@@ -1,9 +1,17 @@
-import 'package:anitemp/model/temperature.dart';
-import 'package:anitemp/ui/page/insert_record.dart';
+import 'package:anitemp/ui/reusable/error_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sqflite/sqflite.dart';
 
+import '../../database/sql/object.dart';
+import '../../database/sql/open.dart';
+import '../../database/sql/typebind/user.dart';
+import '../../model/temperature.dart';
+import '../../model/user.dart';
+import '../page/insert_record.dart';
+import '../reusable/avatar.dart';
 import '../reusable/close_confirm.dart';
 import 'setting.dart' show AnitempSettingPage;
 
@@ -84,6 +92,64 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
             ]));
   }
 
+  Future<List<UserWithId>> get _currentUserInfo async {
+    Database db = await openAnitempSqlite();
+
+    try {
+      return UserWithIdSQLiteExtension.mapFromSQL(
+          await db.query("anitempuser"));
+    } finally {
+      await db.close();
+    }
+  }
+
+  Widget _userInfoBuilder(List<UserWithId> uwid) {
+    if (uwid.isEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const SizedBox.square(
+              dimension: 125,
+              child: FittedBox(child: Icon(FontAwesomeIcons.userPen)))
+        ],
+      );
+    }
+
+    return LayoutBuilder(builder: (context, constraint) {
+      int ipc = 1;
+
+      if (constraint.maxWidth > 500) {
+        ipc = 2;
+      } else if (constraint.maxWidth > 700) {
+        ipc = 3;
+      } else if (constraint.maxWidth > 900) {
+        ipc = 4;
+      }
+
+      return GridView.builder(
+          itemCount: uwid.length,
+          gridDelegate:
+              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: ipc),
+          itemBuilder: (context, idx) {
+            final UserWithId u = uwid[idx];
+            List<Widget> userContainer = <Widget>[
+              Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: AvatarDisplayer(u.image, radius: 35)),
+              Text(u.name)
+            ];
+
+            return SizedBox.square(
+                dimension: 200,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: userContainer));
+          });
+    });
+  }
+
   @override
   Widget build(BuildContext context) => CloseConfirmScaffold(
           scaffold: Scaffold(
@@ -98,15 +164,50 @@ class _AnitempHomepageState extends State<AnitempHomepage> {
             child: const Icon(Icons.add)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: Center(
-          child: TextButton(
-              child: Text("open rec page"),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            InsertRecordPage(initialTemperature: Celsius(37))));
-              }),
-        ),
+            child: FutureBuilder<List<UserWithId>>(
+          future: _currentUserInfo,
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+              case ConnectionState.active:
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      const Padding(
+                          padding: EdgeInsets.all(24),
+                          child: CircularProgressIndicator()),
+                      Text("Getting user informations...")
+                    ]);
+              case ConnectionState.done:
+                if (snapshot.hasData) {
+                  return _userInfoBuilder(snapshot.data!);
+                } else if (snapshot.hasError) {
+                  DateTime errTime = DateTime.now();
+                  String errMsg =
+                      "Something wrong when loading user information.";
+
+                  Future.delayed(Duration.zero,
+                      () => showErrorDialog(context, snapshot.error!, errMsg));
+
+                  return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Padding(
+                            padding: EdgeInsets.only(bottom: 18),
+                            child:
+                                Icon(FontAwesomeIcons.notesMedical, size: 48)),
+                        Text(errMsg, textAlign: TextAlign.center)
+                      ]);
+                }
+
+                return Center();
+            }
+          },
+        )),
       ));
 }

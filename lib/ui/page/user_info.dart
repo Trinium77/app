@@ -15,6 +15,7 @@ import '../../model/animal.dart';
 import '../../model/user.dart';
 import '../../model/user_setting.dart';
 import '../reusable/animal_locales.dart';
+import '../reusable/avatar.dart';
 import '../reusable/error_dialog.dart';
 import '../reusable/action_buttons.dart' show SaveAndDiscardActionButtons;
 import '../reusable/transperant_appbar.dart';
@@ -168,19 +169,6 @@ abstract class _AbstractedUserPageState<U extends User,
               )) ??
       false;
 
-  CircleAvatar _avatar(BuildContext context) {
-    const double rad = 75;
-    return _image == null
-        ? CircleAvatar(
-            radius: rad,
-            backgroundColor: Theme.of(context).primaryColor.withAlpha(0x88),
-            child: const FittedBox(child: Icon(Icons.person)))
-        : CircleAvatar(
-            radius: rad,
-            backgroundImage: MemoryImage(_image!),
-          );
-  }
-
   void _longPressAvaterAction(BuildContext context) async {
     _ChangeImageOptions? opts = await showDialog<_ChangeImageOptions>(
         context: context,
@@ -252,7 +240,7 @@ abstract class _AbstractedUserPageState<U extends User,
                   shrinkWrap: true,
                   children: <Widget>[
                     GestureDetector(
-                      child: _avatar(context),
+                      child: AvatarDisplayer(_image, radius: 75),
                       onTap: () => _onChangeImage(context),
                       onLongPress: () => _longPressAvaterAction(context),
                     ),
