@@ -1,17 +1,17 @@
-name: Flutter unit test
+name: Anitemp data archive format test
 on:
   push:
     branches:
       - main
     paths:
-      - lib/**.dart
-      - '!lib/archive/archivable.dart'
-      - '!lib/archive/codec.dart'
-      - test/**.dart
-      - '!test/data/atda/**.dart'
-      - .github/workflows/test.yml
+      - lib/archive/archivable.dart
+      - lib/archive/codec.dart
+      - test/data/atda/**.dart
+      - .github/workflows/atda_test.yml
 jobs:
   unittest:
+    env:
+      TEST_ATDA: "1"
     name: Unit test
     strategy:
       fail-fast: false
@@ -43,4 +43,4 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
       - name: Execute test
-        run: flutter test
+        run: flutter test test/data/atda/
