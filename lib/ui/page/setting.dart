@@ -157,6 +157,7 @@ class _AnitempUserSettingPageState
               // TODO: Localize
               "Temperature unit preference"),
           leading: DropdownButton<TemperatureUnitPreference>(
+              value: _userSetting.unitPreferece,
               items: TemperatureUnitPreference.values
                   .map<DropdownMenuItem<TemperatureUnitPreference>>((e) =>
                       DropdownMenuItem(
