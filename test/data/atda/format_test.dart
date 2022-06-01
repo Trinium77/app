@@ -18,7 +18,7 @@ get skipTestInCI {
   if (env.containsKey("CI")) {
     return env["TEST_ATDA"] == "1"
         ? false
-        : "No changes on the format, skipping test to reduce load.";
+        : "This test is handled by another action workflow.";
   }
 }
 
