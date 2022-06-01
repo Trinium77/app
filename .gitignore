@@ -47,3 +47,5 @@ app.*.map.json
 
 .vscode/**
 !.vscode/settings.json
+
+/dump/**
